@@ -74,6 +74,8 @@ open /tmp/my-agent-sdk-intake.html
 3. **WHAT IS SUGGESTED TO IMPROVE / ADD**：基于差距的最小建议。
 4. **FINAL CONFIRMATION**：用户确认后才写文件。
 
+落地页的“改进现有项目”会在当前页打开完整配置器；使用同一个 `intake.html` iframe，避免复制表单和功能漂移，并保留“全屏打开”入口。
+
 配置器支持：
 
 - create / improve 切换

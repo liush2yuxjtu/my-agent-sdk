@@ -86,6 +86,18 @@ section{padding:88px 0}
 .video-shell video{display:block;width:100%;aspect-ratio:16/9;border-radius:10px;background:#0d110e}
 .video-note{display:flex;justify-content:space-between;gap:16px;margin-top:12px;color:var(--ink-soft);font:12px var(--sans)}
 
+/* embedded improve flow */
+.improve-dialog{width:min(1180px,calc(100vw - 40px));height:min(900px,calc(100dvh - 40px));padding:0;border:1px solid var(--line);border-radius:16px;background:var(--bg);box-shadow:0 30px 90px #17171355;overflow:hidden}
+.improve-dialog::backdrop{background:#17171399;backdrop-filter:blur(5px)}
+.dialog-layout{height:100%;display:grid;grid-template-rows:auto 1fr}
+.dialog-toolbar{display:flex;align-items:center;gap:14px;padding:14px 16px 14px 20px;background:#fff;border-bottom:1px solid var(--line-soft)}
+.dialog-toolbar h2{margin:0;font-size:16px}.dialog-toolbar p{margin:1px 0 0;color:var(--ink-soft);font:12px var(--sans)}
+.dialog-actions{margin-left:auto;display:flex;align-items:center;gap:8px}.dialog-actions .btn{min-height:44px}
+.dialog-close{width:44px;height:44px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);font:700 20px var(--sans);cursor:pointer;transition-property:background-color,border-color,transform;transition-duration:150ms}
+.dialog-close:hover{background:var(--accent-soft);border-color:var(--accent)}.dialog-close:active{transform:scale(.96)}
+.improve-frame{width:100%;height:100%;border:0;background:var(--bg)}
+@media(max-width:700px){.improve-dialog{width:100vw;height:100dvh;max-width:none;max-height:none;border:0;border-radius:0}.dialog-toolbar{padding:10px 10px 10px 14px}.dialog-toolbar p,.dialog-actions .btn{display:none}}
+
 /* steps */
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:step}
 .step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;position:relative;transition:transform .2s,box-shadow .2s,border-color .2s}
@@ -197,7 +209,7 @@ footer .sp{flex:1}
       <p class="lede">创建新的或改进现有的 Agent SDK：自动检测已有项目并预填，也支持聊天内逐题交互。导出的 JSON 同时包含目标、现状、官方文档逐 URL 账本和 Anthropic 示例逐项目账本。</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="intake.html">创建新项目 →</a>
-        <a class="btn btn-ghost" href="intake.html?operation=improve">改进现有项目</a>
+        <a class="btn btn-ghost" href="intake.html?operation=improve" data-open-improve>改进现有项目 · 当前页试用</a>
       </div>
       <p class="hero-note">$ pi run my-agent-sdk · 输出 my-agent-sdk-build-intake.json</p>
     </div>
@@ -366,6 +378,16 @@ footer .sp{flex:1}
   </div>
 </section>
 
+<dialog class="improve-dialog" id="improve-dialog" aria-labelledby="improve-title" aria-describedby="improve-desc">
+  <div class="dialog-layout">
+    <header class="dialog-toolbar">
+      <div><h2 id="improve-title">改进现有 Agent SDK</h2><p id="improve-desc">留在当前页完成全量配置；本机 Pi 可自动检测项目，网页端也可导入已有 JSON。</p></div>
+      <div class="dialog-actions"><a class="btn btn-ghost btn-sm" href="intake.html?operation=improve">全屏打开</a><button class="dialog-close" type="button" aria-label="关闭配置器">×</button></div>
+    </header>
+    <iframe class="improve-frame" title="改进现有 Agent SDK 配置器" data-src="intake.html?operation=improve"></iframe>
+  </div>
+</dialog>
+
 <footer>
   <div class="wrap">
     <a class="logo" href="#top"><span class="logo-mark">{ }</span>引用驱动配置台</a>
@@ -386,6 +408,28 @@ const cio=new IntersectionObserver(es=>es.forEach(e=>{
   (function tick(t){const p=Math.min((t-t0)/900,1);el.textContent=Math.round(n*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(tick)})(t0);
 }),{threshold:.5});
 document.querySelectorAll('.num[data-n]').forEach(x=>cio.observe(x));
+
+/* keep the full improve form in one source, shown without leaving the landing page */
+const improveDialog=document.querySelector('#improve-dialog');
+const improveFrame=improveDialog.querySelector('.improve-frame');
+function openImprove(event){
+  event?.preventDefault();
+  if(!improveFrame.src) improveFrame.src=improveFrame.dataset.src;
+  if(typeof improveDialog.showModal==='function'){
+    improveDialog.showModal();
+    history.replaceState(null,'','#improve');
+  }else location.href='intake.html?operation=improve';
+}
+function closeImprove(){
+  improveDialog.close();
+  if(location.hash==='#improve') history.replaceState(null,'',location.pathname+location.search);
+}
+document.querySelectorAll('[data-open-improve]').forEach(el=>el.addEventListener('click',openImprove));
+improveDialog.querySelector('.dialog-close').addEventListener('click',closeImprove);
+improveDialog.addEventListener('click',event=>{const r=improveDialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)closeImprove()});
+improveDialog.addEventListener('close',()=>{if(location.hash==='#improve')history.replaceState(null,'',location.pathname+location.search)});
+window.addEventListener('hashchange',()=>{if(location.hash==='#improve'&&!improveDialog.open)openImprove()});
+if(location.hash==='#improve') openImprove();
 </script>
 </body>
 </html>
