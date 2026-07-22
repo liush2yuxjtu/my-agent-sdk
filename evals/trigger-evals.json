@@ -1,0 +1,22 @@
+[
+  {"query":"帮我新建一个 TypeScript Claude Agent SDK 客服项目，npm，支持 streaming 和 sessions；请先用可视化表单让我确认范围。","should_trigger":true},
+  {"query":"我要做一个 Python/uv 的 Claude Agent SDK 研究助手，需要 subagents 和自定义 MCP 工具，给我官方逐页引用。","should_trigger":true},
+  {"query":"搭一个网页 Agent，AskUserQuestion 必须真正从后端阻塞到浏览器再回到同一个 run，不要用普通文本假装。","should_trigger":true},
+  {"query":"create a minimal claude agent sdk app, node + pnpm, and give me a visual config before writing files","should_trigger":true},
+  {"query":"用 Claude Agent SDK 做带权限白名单的 coding agent，先让我勾选能力，然后生成计划确认页。","should_trigger":true},
+  {"query":"我想从 anthropics/claude-agent-sdk-demos 参考 simple-chatapp，做一个可恢复会话的流式聊天应用。","should_trigger":true},
+  {"query":"scaffold an agent sdk business app with custom tools and cancellation; cite the exact official docs pages","should_trigger":true},
+  {"query":"帮我初始化 Agent SDK hello world，Python + pip，最小版本，不要顺手加 MCP。","should_trigger":true},
+  {"query":"做一个 Claude Agent SDK 邮件助手原型，先收集项目名、语言、包管理器和安全约束，再开始。","should_trigger":true},
+  {"query":"new sdk agent app with AskUserQuestion previews and multi-select; show the demo source you borrowed from","should_trigger":true},
+  {"query":"审查这个已有的 Claude Agent SDK 项目有没有正确处理 cancellation 和权限。","should_trigger":false},
+  {"query":"解释 Claude Agent SDK 的 agent loop 是怎么工作的，不要创建项目。","should_trigger":false},
+  {"query":"给现有 React 页面加一组多选框和导出 JSON 按钮。","should_trigger":false},
+  {"query":"我只想找 Claude Agent SDK 的官方 quickstart 链接。","should_trigger":false},
+  {"query":"创建一个普通 Anthropic Messages API 的聊天脚本，不使用 Agent SDK。","should_trigger":false},
+  {"query":"帮我优化现有 SKILL.md 的触发描述，并跑 trigger eval。","should_trigger":false},
+  {"query":"修复项目里 @anthropic-ai/claude-agent-sdk 的 TypeScript 类型错误。","should_trigger":false},
+  {"query":"比较 LangGraph、OpenAI Agents SDK 和 Claude Agent SDK 的优缺点。","should_trigger":false},
+  {"query":"把这份 SDK 架构评审写成 HTML 报告。","should_trigger":false},
+  {"query":"给我一个调用 Claude API 的 curl 示例。","should_trigger":false}
+]

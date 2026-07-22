@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Set Review - my-agent-sdk</title>
+  
+  
+  
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Georgia, 'Noto Serif SC', serif; background: #faf9f5; padding: 2rem; color: #141413; }
+    h1 { font-family: system-ui, sans-serif; margin-bottom: 0.5rem; font-size: 1.5rem; }
+    .description { color: #b0aea5; margin-bottom: 1.5rem; font-style: italic; max-width: 900px; }
+    .controls { margin-bottom: 1rem; display: flex; gap: 0.5rem; }
+    .btn { font-family: system-ui, sans-serif; padding: 0.5rem 1rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-weight: 500; }
+    .btn-add { background: #6a9bcc; color: white; }
+    .btn-add:hover { background: #5889b8; }
+    .btn-export { background: #d97757; color: white; }
+    .btn-export:hover { background: #c4613f; }
+    table { width: 100%; max-width: 1100px; border-collapse: collapse; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    th { font-family: system-ui, sans-serif; background: #141413; color: #faf9f5; padding: 0.75rem 1rem; text-align: left; font-size: 0.875rem; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e8e6dc; vertical-align: top; }
+    tr:nth-child(even) td { background: #faf9f5; }
+    tr:hover td { background: #f3f1ea; }
+    .section-header td { background: #e8e6dc; font-family: system-ui, sans-serif; font-weight: 500; font-size: 0.8rem; color: #141413; text-transform: uppercase; letter-spacing: 0.05em; }
+    .query-input { width: 100%; padding: 0.4rem; border: 1px solid #e8e6dc; border-radius: 4px; font-size: 0.875rem; font-family: Georgia, 'Noto Serif SC', serif; resize: vertical; min-height: 60px; }
+    .query-input:focus { outline: none; border-color: #d97757; box-shadow: 0 0 0 2px rgba(217,119,87,0.15); }
+    .toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle .slider { position: absolute; inset: 0; background: #b0aea5; border-radius: 24px; cursor: pointer; transition: 0.2s; }
+    .toggle .slider::before { content: ""; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
+    .toggle input:checked + .slider { background: #d97757; }
+    .toggle input:checked + .slider::before { transform: translateX(20px); }
+    .btn-delete { background: #c44; color: white; padding: 0.3rem 0.6rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-family: system-ui, sans-serif; }
+    .btn-delete:hover { background: #a33; }
+    .summary { margin-top: 1rem; color: #b0aea5; font-size: 0.875rem; }
+  </style>
+</head>
+<body>
+  <h1>触发评测集： <span id="skill-name">my-agent-sdk</span></h1>
+  <p class="description">当前技能描述： <span id="skill-desc">以可导出的中文 HTML 配置器包装并驱动 new-agent-sdk，创建或初始化 Claude Agent SDK 应用。</span></p>
+
+  <div class="controls">
+    <button class="btn btn-add" onclick="addRow()">＋ 添加测试语句</button>
+    <button class="btn btn-export" onclick="exportEvalSet()">导出评测集 JSON</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:65%">测试语句</th>
+        <th style="width:18%">应触发</th>
+        <th style="width:10%">操作</th>
+      </tr>
+    </thead>
+    <tbody id="eval-body"></tbody>
+  </table>
+
+  <p class="summary" id="summary"></p>
+
+  <script>
+    const EVAL_DATA = [{"query": "帮我新建一个 TypeScript Claude Agent SDK 客服项目，npm，支持 streaming 和 sessions；请先用可视化表单让我确认范围。", "should_trigger": true}, {"query": "我要做一个 Python/uv 的 Claude Agent SDK 研究助手，需要 subagents 和自定义 MCP 工具，给我官方逐页引用。", "should_trigger": true}, {"query": "搭一个网页 Agent，AskUserQuestion 必须真正从后端阻塞到浏览器再回到同一个 run，不要用普通文本假装。", "should_trigger": true}, {"query": "create a minimal claude agent sdk app, node + pnpm, and give me a visual config before writing files", "should_trigger": true}, {"query": "用 Claude Agent SDK 做带权限白名单的 coding agent，先让我勾选能力，然后生成计划确认页。", "should_trigger": true}, {"query": "我想从 anthropics/claude-agent-sdk-demos 参考 simple-chatapp，做一个可恢复会话的流式聊天应用。", "should_trigger": true}, {"query": "scaffold an agent sdk business app with custom tools and cancellation; cite the exact official docs pages", "should_trigger": true}, {"query": "帮我初始化 Agent SDK hello world，Python + pip，最小版本，不要顺手加 MCP。", "should_trigger": true}, {"query": "做一个 Claude Agent SDK 邮件助手原型，先收集项目名、语言、包管理器和安全约束，再开始。", "should_trigger": true}, {"query": "new sdk agent app with AskUserQuestion previews and multi-select; show the demo source you borrowed from", "should_trigger": true}, {"query": "审查这个已有的 Claude Agent SDK 项目有没有正确处理 cancellation 和权限。", "should_trigger": false}, {"query": "解释 Claude Agent SDK 的 agent loop 是怎么工作的，不要创建项目。", "should_trigger": false}, {"query": "给现有 React 页面加一组多选框和导出 JSON 按钮。", "should_trigger": false}, {"query": "我只想找 Claude Agent SDK 的官方 quickstart 链接。", "should_trigger": false}, {"query": "创建一个普通 Anthropic Messages API 的聊天脚本，不使用 Agent SDK。", "should_trigger": false}, {"query": "帮我优化现有 SKILL.md 的触发描述，并跑 trigger eval。", "should_trigger": false}, {"query": "修复项目里 @anthropic-ai/claude-agent-sdk 的 TypeScript 类型错误。", "should_trigger": false}, {"query": "比较 LangGraph、OpenAI Agents SDK 和 Claude Agent SDK 的优缺点。", "should_trigger": false}, {"query": "把这份 SDK 架构评审写成 HTML 报告。", "should_trigger": false}, {"query": "给我一个调用 Claude API 的 curl 示例。", "should_trigger": false}];
+
+    let evalItems = [...EVAL_DATA];
+
+    function render() {
+      const tbody = document.getElementById('eval-body');
+      tbody.innerHTML = '';
+
+      // Sort: should-trigger first, then should-not-trigger
+      const sorted = evalItems
+        .map((item, origIdx) => ({ ...item, origIdx }))
+        .sort((a, b) => (b.should_trigger ? 1 : 0) - (a.should_trigger ? 1 : 0));
+
+      let lastGroup = null;
+      sorted.forEach(item => {
+        const group = item.should_trigger ? 'trigger' : 'no-trigger';
+        if (group !== lastGroup) {
+          const headerRow = document.createElement('tr');
+          headerRow.className = 'section-header';
+          headerRow.innerHTML = `<td colspan="3">${item.should_trigger ? '应该触发' : '不应触发'}</td>`;
+          tbody.appendChild(headerRow);
+          lastGroup = group;
+        }
+
+        const idx = item.origIdx;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><textarea class="query-input" onchange="updateQuery(${idx}, this.value)">${escapeHtml(item.query)}</textarea></td>
+          <td>
+            <label class="toggle">
+              <input type="checkbox" ${item.should_trigger ? 'checked' : ''} onchange="updateTrigger(${idx}, this.checked)">
+              <span class="slider"></span>
+            </label>
+            <span style="margin-left:8px;font-size:0.8rem;color:#b0aea5">${item.should_trigger ? '是' : '否'}</span>
+          </td>
+          <td><button class="btn-delete" onclick="deleteRow(${idx})">删除</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+      updateSummary();
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function updateQuery(idx, value) { evalItems[idx].query = value; updateSummary(); }
+    function updateTrigger(idx, value) { evalItems[idx].should_trigger = value; render(); }
+    function deleteRow(idx) { evalItems.splice(idx, 1); render(); }
+
+    function addRow() {
+      evalItems.push({ query: '', should_trigger: true });
+      render();
+      const inputs = document.querySelectorAll('.query-input');
+      inputs[inputs.length - 1].focus();
+    }
+
+    function updateSummary() {
+      const trigger = evalItems.filter(i => i.should_trigger).length;
+      const noTrigger = evalItems.filter(i => !i.should_trigger).length;
+      document.getElementById('summary').textContent =
+        `共 ${evalItems.length} 条：${trigger} 条应该触发，${noTrigger} 条不应触发`;
+    }
+
+    function exportEvalSet() {
+      const valid = evalItems.filter(i => i.query.trim() !== '');
+      const data = valid.map(i => ({ query: i.query.trim(), should_trigger: i.should_trigger }));
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'my-agent-sdk-trigger-eval-set.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    render();
+  </script>
+<p style="margin-top:24px;padding-top:14px;border-top:1px solid #e8e6dc;font:12px/1.5 ui-monospace,monospace;color:#777;word-break:break-all">来源项目：my-agent-sdk · 绝对路径：/Users/liushiyuwin/.pi/agent/skills/my-agent-sdk · Pi session ID：E674FE87-0D91-49D4-93DB-6B4A9DBC0012</p></body>
+</html>

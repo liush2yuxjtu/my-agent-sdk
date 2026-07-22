@@ -1,0 +1,41 @@
+{
+  "skill_name": "my-agent-sdk",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我创建一个 TypeScript Claude Agent SDK 客服助手，要 streaming、sessions 和自定义工具。先让我在可视化页面里选配置。",
+      "expected_output": "先打开可导出的中文 HTML 配置器；计划经 HTML 确认后才创建项目；逐能力引用官方 URL 与具体 demo。",
+      "files": [],
+      "expectations": [
+        "在创建项目文件前提供包含输入框、多选框和导出按钮的 HTML 配置器",
+        "明确加载并遵循 new-agent-sdk 与 agent-sdk-dev",
+        "streaming、sessions、custom tools 各自引用对应的 code.claude.com 具体页面",
+        "至少引用 simple-chatapp 的具体 demo URL，并附 demo 非生产警告"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "用 Python/uv 搭个支持 AskUserQuestion 和子代理的研究助手，网页要能真正接住问题并把答案送回同一个 agent run。",
+      "expected_output": "AskUserQuestion 实现包含浏览器阻塞往返与恢复；引用 ask-user-question-previews 和 research-agent；验证 Python 环境。",
+      "files": [],
+      "expectations": [
+        "AskUserQuestion 方案包含 host 到 UI 的阻塞往返、取消或超时边界及同一 run 恢复",
+        "引用 ask-user-question-previews 和 research-agent 的具体 demo URL",
+        "引用 custom-tools、permissions 或 agent-loop 中与所选实现直接相关的具体官方页面",
+        "使用 HTML 计划确认门，未确认前不写项目文件"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "给我一个最小 Claude Agent SDK hello world，Node + npm，别加 MCP 或会话。",
+      "expected_output": "HTML 收集/确认后仅实现最小入口，不添加未请求能力；引用 quickstart 与 hello-world。",
+      "files": [],
+      "expectations": [
+        "只实现最小入口，不加入 MCP、sessions、subagents 等未请求能力",
+        "引用官方 quickstart 具体 URL",
+        "引用 hello-world 具体 demo URL",
+        "报告 SDK 版本、验证命令、输出路径和剩余风险"
+      ]
+    }
+  ]
+}
