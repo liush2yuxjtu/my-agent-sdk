@@ -1,6 +1,6 @@
 # my-agent-sdk
 
-用**可导出的中文 HTML 配置器**包装 Claude Agent SDK 官方脚手架流程：先选择项目需求、能力与证据，再把结构化配置交给 `new-agent-sdk` 创建和验证应用。
+用**聊天内交互**或**可预填、可导出的中文 HTML 配置器**创建新的或改进现有的 Claude Agent SDK 应用。已有项目会自动检测语言、包管理器、SDK 版本和能力；两种模式都沿用 `new-agent-sdk` 的官方文档与实现规则。
 
 > `my-agent-sdk` 不重写脚手架逻辑。它明确依赖并调用 **[`new-agent-sdk`](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/agent-sdk-dev/commands/new-sdk-app.md)**；该流程来自 Anthropic 官方 [`agent-sdk-dev` 插件](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/agent-sdk-dev)。
 
@@ -8,15 +8,16 @@
 
 ## 为什么需要这个包装层
 
-`new-agent-sdk` 负责正确创建项目；`my-agent-sdk` 补充三个交付门：
+`new-agent-sdk` 负责新项目的正确创建；`my-agent-sdk` 增加：
 
-1. **HTML 需求门**：项目名、语言、包管理器、能力多选和自定义要求。
-2. **引用门**：按功能选择 `code.claude.com` 的具体页面和 `claude-agent-sdk-demos` 的具体项目。
-3. **HTML 计划门**：用户导出确认后，才把需求交给 `new-agent-sdk` 实施，并由 `agent-sdk-dev` 验证。
+1. **双模式**：create 新项目；improve 现有项目且不重新初始化。
+2. **双交互入口**：聊天中一次问一个问题，或使用 HTML 表单。
+3. **智能预填**：在已有项目目录直接运行脚本，无需拼 `--args`。
+4. **引用与计划门**：确认后才实施，并由 `agent-sdk-dev` 验证。
 
 ```text
-用户 → HTML intake → 引用账本 → HTML 计划确认
-     → new-agent-sdk → agent-sdk-dev 验证 → HTML 交付
+用户 → create / improve → in-chat / HTML form → 引用账本
+     → new-agent-sdk 规则 → agent-sdk-dev 验证 → HTML 交付
 ```
 
 ## 依赖关系
@@ -50,18 +51,30 @@ git clone https://github.com/liush2yuxjtu/my-agent-sdk.git \
 对 Pi 说：
 
 ```text
-用 my-agent-sdk 创建一个 TypeScript 客服 Agent。
-需要 streaming、AskUserQuestion 和 sessions，使用 npm。
+用 my-agent-sdk 创建一个 TypeScript 客服 Agent，聊天里问我。
 ```
 
-技能会打开 [`artifacts/intake.html`](artifacts/intake.html)。配置器支持：
+或：
 
+```text
+用 my-agent-sdk 改进当前 Agent SDK 项目，打开预填表单。
+```
+
+HTML 模式不需要命令参数。在新目录或已有项目目录直接运行：
+
+```bash
+python3 ~/.pi/agent/skills/my-agent-sdk/scripts/create_intake.py
+open /tmp/my-agent-sdk-intake.html
+```
+
+配置器支持：
+
+- create / improve 切换
+- 现有项目的语言、包管理器、SDK 版本与能力自动预填
+- 导入旧 JSON 后继续填写
 - 项目信息输入框和能力多选框
-- 24 个 Agent SDK 中文文档的逐 URL 引用开关
-- 8 个 Anthropic demo 的逐项目引用开关
-- 能力到引用的自动推荐
-- 可增删约束、实时 JSON 预览
-- “复制为提示词”和“导出构建配置 JSON”
+- 24 个官方文档逐 URL、8 个 demo 逐项目引用开关
+- 可增删约束、实时 JSON、复制提示词和导出
 
 ## 引用策略
 
@@ -96,7 +109,8 @@ Anthropic 在[仓库 README](https://github.com/anthropics/claude-agent-sdk-demo
 ## HTML 推介包
 
 - [交互式推介片](artifacts/pitch-video.html)
-- [产品落地页](artifacts/landing-page.html)
+- [GitHub Pages 落地页](artifacts/index.html)
+- [旧版产品落地页](artifacts/landing-page.html)
 - [键盘控制推介幻灯片](artifacts/pitch-slides.html)
 - [触发评测编辑器](artifacts/eval-review.html)
 

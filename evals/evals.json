@@ -36,6 +36,42 @@
         "引用 hello-world 具体 demo URL",
         "报告 SDK 版本、验证命令、输出路径和剩余风险"
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "当前目录是一个已有的 TypeScript Claude Agent SDK 项目。帮我增加 AskUserQuestion，但保持已有 sessions 行为；请自动预填 HTML，不要让我拼命令参数。",
+      "expected_output": "检测现有项目并打开 improve 模式预填表单；确认后只做最小修改。",
+      "files": [],
+      "expectations": [
+        "自动选择 improve 而非重新初始化",
+        "HTML 预填项目路径、语言、包管理器、SDK 版本和已检测能力",
+        "要求填写改进目标并保留现有行为",
+        "引用 user-input、sessions 和 ask-user-question-previews 的具体 URL"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "我想新建一个 Python Agent SDK 研究助手，但不要打开网页，在聊天里一步步问我。",
+      "expected_output": "使用 in-chat 模式一次问一个未回答问题，再确认计划。",
+      "files": [],
+      "expectations": [
+        "明确选择 create 和 in-chat",
+        "一次只问一个尚未回答的问题",
+        "不强迫用户打开 HTML",
+        "答案齐全后等待明确计划确认"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "帮我升级这个旧 Agent SDK 服务的 streaming 和权限实现，用聊天方式确认需求。",
+      "expected_output": "先只读检查旧项目，再通过聊天确认改进边界并验证回归。",
+      "files": [],
+      "expectations": [
+        "先读取依赖、入口、调用方和测试而非重新初始化",
+        "记录当前 SDK 版本和必须保持的行为",
+        "逐项引用 streaming-output、permissions 及相关 demo",
+        "实施后运行原有测试和最小回归检查"
+      ]
     }
   ]
 }

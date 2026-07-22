@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Generate the citation-driven my-agent-sdk intake HTML."""
-from argparse import ArgumentParser
 from html import escape
 from pathlib import Path
 import json
+import os
 
 PROJECT = "/Users/liushiyuwin/.pi/agent/skills/my-agent-sdk"
 DOCS = [
@@ -44,14 +44,89 @@ DEMOS = [
 ]
 
 
+def detect_project(root: Path) -> dict:
+    """Read manifests and source names only; never read env/credential files."""
+    package = root / "package.json"
+    pyproject = root / "pyproject.toml"
+    manifest_text = ""
+    data = {}
+    if package.is_file():
+        try:
+            data = json.loads(package.read_text(encoding="utf-8"))
+            manifest_text = json.dumps(data)
+        except (OSError, json.JSONDecodeError):
+            pass
+    elif pyproject.is_file():
+        try:
+            manifest_text = pyproject.read_text(encoding="utf-8")
+        except OSError:
+            pass
+
+    sdk_marker = "claude-agent-sdk" in manifest_text
+    candidates = []
+    for pattern in ("*.ts", "*.tsx", "*.js", "*.mjs", "*.py"):
+        candidates.extend(root.glob(pattern))
+        candidates.extend((root / "src").glob(f"**/{pattern}") if (root / "src").is_dir() else [])
+    source = ""
+    for path in candidates[:200]:
+        if path.stat().st_size > 500_000:
+            continue
+        try:
+            text = path.read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            continue
+        if "claude-agent-sdk" in text or "claude_agent_sdk" in text:
+            sdk_marker = True
+        source += "\n" + text[:100_000]
+
+    if not sdk_marker:
+        return {"operation": "create"}
+
+    deps = {**data.get("dependencies", {}), **data.get("devDependencies", {})}
+    version = deps.get("@anthropic-ai/claude-agent-sdk", "")
+    if not version:
+        for line in manifest_text.splitlines():
+            if "claude-agent-sdk" in line or "claude_agent_sdk" in line:
+                version = line.strip().strip("',\"")
+                break
+    language = "Python" if pyproject.is_file() or any(p.suffix == ".py" for p in candidates) else "TypeScript"
+    tooling = "uv" if (root / "uv.lock").exists() else "pnpm" if (root / "pnpm-lock.yaml").exists() else "yarn" if (root / "yarn.lock").exists() else "bun" if (root / "bun.lock").exists() or (root / "bun.lockb").exists() else "npm" if package.is_file() else "pip"
+    checks = {
+        "streaming": ("stream" in source),
+        "AskUserQuestion": ("AskUserQuestion" in source),
+        "MCP": ("MCP" in source or "mcp" in source),
+        "permissions": ("permission" in source or "canUseTool" in source),
+        "sessions": ("resume" in source or "session" in source or "continue" in source),
+        "subagents": ("subagent" in source or "agents" in source),
+        "custom tools": ("createSdkMcpServer" in source or "@tool" in source or "tool(" in source),
+        "structured outputs": ("outputFormat" in source or "json_schema" in source),
+        "hooks": ("PreToolUse" in source or "PostToolUse" in source or "hooks" in source),
+    }
+    name = data.get("name") or root.name
+    return {
+        "operation": "improve",
+        "project_name": name,
+        "project_path": str(root),
+        "language": language,
+        "tooling": tooling,
+        "agent_type": "custom use case",
+        "starting_point": "existing project",
+        "use_case": f"改进现有 {name} Agent SDK 应用",
+        "capabilities": [key for key, found in checks.items() if found],
+        "requirements": ["保持未涉及的现有行为", "不要写入真实 secret；.env 必须忽略"],
+        "current_state": {"sdk_version": version or "detected, version unresolved", "detected_capabilities": [key for key, found in checks.items() if found]},
+    }
+
+
 def main() -> None:
-    p = ArgumentParser()
-    p.add_argument("--output", required=True)
-    p.add_argument("--session-id", default="unknown")
-    a = p.parse_args()
-    html = (TEMPLATE.replace("__SESSION_HTML__", escape(a.session_id))
-            .replace("__SESSION_JSON__", json.dumps(a.session_id))
+    root = Path.cwd().resolve()
+    prefill = detect_project(root)
+    session_id = os.environ.get("TERM_SESSION_ID", "unknown")
+    output = Path("/tmp/my-agent-sdk-intake.html")
+    html = (TEMPLATE.replace("__SESSION_HTML__", escape(session_id))
+            .replace("__SESSION_JSON__", json.dumps(session_id))
             .replace("__PROJECT__", PROJECT)
+            .replace("__PREFILL__", json.dumps(prefill, ensure_ascii=False).replace("</", "<\\/"))
             .replace("__DOCS__", json.dumps([
                 {"slug": s, "title": t, "description": d, "group": g,
                  "url": f"https://code.claude.com/docs/zh-CN/agent-sdk/{s}"}
@@ -60,20 +135,20 @@ def main() -> None:
                 {"project": n, "description": d, "tag": tag,
                  "url": f"https://github.com/anthropics/claude-agent-sdk-demos/tree/main/{n}"}
                 for n, d, tag in DEMOS], ensure_ascii=False)))
-    Path(a.output).write_text(html, encoding="utf-8")
-    print(Path(a.output).resolve())
+    output.write_text(html, encoding="utf-8")
+    print(output)
 
 
 TEMPLATE = r'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>my-agent-sdk · 引用驱动配置台</title><style>
 *{box-sizing:border-box}body{margin:0;background:#faf9f5;color:#171713;font:15px/1.55 Georgia,"Noto Serif SC",serif}main{max-width:1180px;margin:auto;padding:34px 22px 120px}h1,h2,h3,button,th,.chip,.tab{font-family:ui-sans-serif,system-ui,sans-serif}h1{font-size:clamp(34px,6vw,68px);line-height:.95;letter-spacing:-.04em;margin:8px 0 14px}.lede{max-width:75ch;color:#676258;font-size:18px}.topbar{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0}.tab{border:1px solid #ddd7c9;background:white;color:#24231f;border-radius:99px;padding:9px 14px;cursor:pointer}.tab.active{background:#1c1c19;color:#fff}.panel{background:white;border:1px solid #e2ddd1;border-radius:10px;padding:20px;margin:16px 0;box-shadow:0 2px 8px #211a0b0a}.formgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.wide{grid-column:1/-1}label>span{display:block;font:700 13px system-ui,sans-serif;margin-bottom:6px}input[type=text],textarea,select{width:100%;border:1px solid #ccc5b6;border-radius:7px;padding:10px 11px;background:#fff;font:inherit}textarea{min-height:82px;resize:vertical}input:focus,textarea:focus,select:focus{outline:3px solid #d9775728;border-color:#d97757}.capgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.cap{border:1px solid #ddd7c9;border-radius:7px;padding:10px;background:#fbfaf6}.cap:has(input:checked){border-color:#d16d4c;background:#fff3ed}.cap input{accent-color:#d16d4c}.section-head{display:flex;justify-content:space-between;gap:14px;align-items:end;margin-top:28px}.section-head p{margin:0;color:#777166}.badge{font:700 12px system-ui,sans-serif;background:#ece8de;border-radius:99px;padding:5px 9px;white-space:nowrap}table{width:100%;border-collapse:collapse;background:white;border-radius:9px;overflow:hidden;border:1px solid #e1dbce}th{background:#1b1b18;color:#faf9f5;padding:11px;text-align:left;font-size:13px}td{padding:11px;border-bottom:1px solid #ece8de;vertical-align:top}tr:nth-child(even) td{background:#fbfaf6}tr:hover td{background:#f5f1e9}.cite-title{font-weight:700}.url{display:block;color:#a54b30;font:12px/1.45 ui-monospace,monospace;word-break:break-all;margin-top:3px}.desc{color:#666157}.toggle{position:relative;display:inline-block;width:44px;height:24px}.toggle input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;background:#aaa69c;border-radius:24px;cursor:pointer}.slider:before{content:"";position:absolute;width:18px;height:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.15s}.toggle input:checked+.slider{background:#d16d4c}.toggle input:checked+.slider:before{transform:translateX(20px)}.req{display:grid;grid-template-columns:1fr auto;gap:8px;margin:8px 0}.delete{background:#eee9df;color:#6d3020}.summary{background:#1d211d;color:#f4efe4;border-radius:9px;padding:16px;white-space:pre-wrap;max-height:360px;overflow:auto;font:12px/1.55 ui-monospace,monospace}.warning{border-left:4px solid #d16d4c;padding:10px 14px;background:#fff4ee;color:#5d3326}.footerbar{position:fixed;bottom:0;left:0;right:0;background:#faf9f5ed;backdrop-filter:blur(10px);border-top:1px solid #ddd7c9;padding:13px 22px;display:flex;gap:10px;justify-content:center;align-items:center;z-index:5}.footerbar button{border:0;border-radius:7px;padding:11px 16px;font-weight:750;cursor:pointer}.primary{background:#d16d4c;color:#fff}.secondary{background:#1d211d;color:#fff}.status{color:#6c675d;font-size:13px}.provenance{border-top:1px solid #ddd7c9;padding-top:15px;color:#766f64;font:11px/1.5 ui-monospace,monospace;word-break:break-all}@media(max-width:850px){.formgrid{grid-template-columns:1fr 1fr}.capgrid{grid-template-columns:1fr 1fr}.citation-table th:nth-child(2),.citation-table td:nth-child(2){display:none}}@media(max-width:560px){.formgrid{grid-template-columns:1fr}.capgrid{grid-template-columns:1fr}.wide{grid-column:auto}.footerbar{flex-wrap:wrap}.status{width:100%;text-align:center}main{padding-bottom:160px}}
 </style></head><body><main><p class="badge">MY-AGENT-SDK → NEW-AGENT-SDK</p><h1>用证据配置你的 Agent。</h1><p class="lede">先写项目意图，再勾选能力与引用。导出的 JSON 同时包含构建需求、官方文档逐 URL 账本和 Anthropic 示例逐项目账本。</p>
 <div class="topbar"><button class="tab active" data-target="brief">① 项目</button><button class="tab" data-target="docs">② 官方文档</button><button class="tab" data-target="demos">③ 示例项目</button><button class="tab" data-target="export-section">④ 检查并导出</button></div>
-<section class="panel" id="brief"><h2>项目需求</h2><div class="formgrid"><label><span>项目名</span><input id="project" type="text" placeholder="例如 support-agent"></label><label><span>语言</span><select id="language"><option>TypeScript</option><option>Python</option></select></label><label><span>包管理器</span><select id="tooling"><option>npm</option><option>pnpm</option><option>yarn</option><option>bun</option><option>uv</option><option>pip</option><option>poetry</option></select></label><label><span>代理类型</span><select id="agentType"><option>coding</option><option>business</option><option selected>custom use case</option></select></label><label><span>起点</span><select id="starting"><option>minimal</option><option>common features</option><option selected>use-case-specific</option></select></label><label><span>目标目录</span><input id="path" type="text" placeholder="例如 /Users/me/projects/support-agent"></label><label class="wide"><span>这个 Agent 要完成什么？</span><textarea id="usecase" placeholder="例如：在网页中接收退款咨询；必要时通过 AskUserQuestion 补充订单信息；流式返回处理进度。"></textarea></label></div><h3>能力（可多选）</h3><div class="capgrid" id="caps"></div><h3>补充要求</h3><div id="requirements"></div><button class="tab" id="addReq" type="button">＋ 添加一条要求</button></section>
+<section class="panel" id="brief"><h2>项目需求</h2><div class="formgrid"><label><span>操作</span><select id="operation"><option value="create">创建新项目</option><option value="improve">改进现有项目</option></select></label><label><span>项目名</span><input id="project" type="text" placeholder="例如 support-agent"></label><label><span>目标目录</span><input id="path" type="text" placeholder="例如 /Users/me/projects/support-agent"></label><label><span>语言</span><select id="language"><option>TypeScript</option><option>Python</option></select></label><label><span>包管理器</span><select id="tooling"><option>npm</option><option>pnpm</option><option>yarn</option><option>bun</option><option>uv</option><option>pip</option><option>poetry</option></select></label><label><span>代理类型</span><select id="agentType"><option>coding</option><option>business</option><option selected>custom use case</option></select></label><label><span>起点</span><select id="starting"><option>minimal</option><option>common features</option><option selected>use-case-specific</option><option>existing project</option></select></label><label class="wide"><span>这个 Agent 要完成什么？</span><textarea id="usecase" placeholder="例如：在网页中接收退款咨询；必要时通过 AskUserQuestion 补充订单信息。"></textarea></label><label class="wide" id="changeField"><span>希望改进什么？</span><textarea id="requestedChanges" placeholder="例如：增加真正的 AskUserQuestion 浏览器往返，同时保持现有会话恢复行为。"></textarea></label></div><div id="currentStatePanel" class="warning" hidden><strong>自动检测的当前状态</strong><pre id="currentState" style="white-space:pre-wrap"></pre></div><h3>能力（可多选）</h3><div class="capgrid" id="caps"></div><h3>补充要求</h3><div id="requirements"></div><button class="tab" id="addReq" type="button">＋ 添加一条要求</button></section>
 <section id="docs"><div class="section-head"><div><h2>官方文档 · 逐 URL</h2><p>每个开关对应一个独立页面；能力选择会自动推荐相关页面。</p></div><span class="badge" id="docCount"></span></div><table class="citation-table"><thead><tr><th>页面与 URL</th><th>这页回答什么</th><th>纳入引用</th></tr></thead><tbody id="docBody"></tbody></table></section>
 <section id="demos"><div class="section-head"><div><h2>Anthropic 示例 · 逐项目</h2><p>引用具体项目，不只引用仓库首页。</p></div><span class="badge" id="demoCount"></span></div><p class="warning"><strong>生产边界：</strong><a href="https://github.com/anthropics/claude-agent-sdk-demos#readme">仓库根 README</a> 明确说明这些项目仅供本地开发，不应直接部署到生产或规模化使用。</p><table class="citation-table"><thead><tr><th>项目与 URL</th><th>可借鉴的实现先例</th><th>纳入引用</th></tr></thead><tbody id="demoBody"></tbody></table></section>
-<section class="panel" id="export-section"><h2>导出前检查</h2><p>导出后，<code>my-agent-sdk</code> 会把已回答需求交给 <code>new-agent-sdk</code>；后者仍负责当前文档核验、实现与验证。</p><pre class="summary" id="summary"></pre></section><p class="provenance">来源项目：my-agent-sdk · 绝对路径：__PROJECT__ · Pi session ID：__SESSION_HTML__</p></main><footer class="footerbar"><span class="status" id="status">请先填写项目名和用途。</span><button class="secondary" id="copy">复制为提示词</button><button class="primary" id="export">导出构建配置 JSON</button></footer>
+<section class="panel" id="export-section"><h2>导出前检查</h2><p>导出后，<code>my-agent-sdk</code> 会把已回答需求交给 <code>new-agent-sdk</code>；后者仍负责当前文档核验、实现与验证。</p><pre class="summary" id="summary"></pre></section><p class="provenance">来源项目：my-agent-sdk · 绝对路径：__PROJECT__ · Pi session ID：__SESSION_HTML__</p></main><footer class="footerbar"><span class="status" id="status">请先填写项目名和用途。</span><input id="importFile" type="file" accept="application/json" hidden><button class="tab" id="import">导入旧 JSON</button><button class="secondary" id="copy">复制为提示词</button><button class="primary" id="export">导出配置 JSON</button></footer>
 <script>
-const DOCS=__DOCS__,DEMOS=__DEMOS__,sessionId=__SESSION_JSON__;
+const DOCS=__DOCS__,DEMOS=__DEMOS__,PREFILL=__PREFILL__,sessionId=__SESSION_JSON__;
 const capabilities=[['streaming','流式输出'],['AskUserQuestion','AskUserQuestion'],['MCP','MCP'],['permissions','权限'],['sessions','会话'],['subagents','子代理'],['custom tools','自定义工具'],['structured outputs','结构化输出'],['hooks','Hooks'],['production hardening','生产加固']];
 const mapDocs={streaming:['streaming-output','streaming-vs-single-mode','agent-loop'],AskUserQuestion:['user-input','permissions','agent-loop'],MCP:['mcp','custom-tools'],permissions:['permissions','hooks'],sessions:['sessions','session-storage'],subagents:['subagents','hooks'],['custom tools']:['custom-tools','mcp'],['structured outputs']:['structured-outputs'],hooks:['hooks'],['production hardening']:['hosting','secure-deployment','observability','cost-tracking']};
 const mapDemos={streaming:['simple-chatapp'],AskUserQuestion:['ask-user-question-previews'],sessions:['hello-world-v2','simple-chatapp'],subagents:['research-agent'],hooks:['research-agent'],['custom tools']:['hello-world'],MCP:['hello-world'],['production hardening']:[]};
@@ -83,16 +158,20 @@ document.querySelector('#docBody').innerHTML=DOCS.map(x=>citationRow(x,'doc')).j
 function setChecked(kind,key,value=true){const x=document.querySelector(`input[data-kind="${kind}"][data-key="${key}"]`);if(x)x.checked=value}
 ['overview','quickstart','agent-loop'].forEach(x=>setChecked('doc',x));setChecked('demo','hello-world');
 function recommend(){const selected=[...document.querySelectorAll('#caps input:checked')].map(x=>x.value);selected.forEach(c=>(mapDocs[c]||[]).forEach(x=>setChecked('doc',x)));selected.forEach(c=>(mapDemos[c]||[]).forEach(x=>setChecked('demo',x)));const lang=document.querySelector('#language').value;setChecked('doc',lang==='Python'?'python':'typescript');render()}
-function addRequirement(value=''){const row=document.createElement('div');row.className='req';row.innerHTML=`<input type="text" value="${value.replaceAll('"','&quot;')}" placeholder="例如：30 秒超时；只允许只读工具"><button class="delete" type="button">删除</button>`;row.querySelector('input').oninput=render;row.querySelector('button').onclick=()=>{row.remove();render()};document.querySelector('#requirements').appendChild(row)}
-addRequirement('不要写入真实 secret；.env 必须忽略');document.querySelector('#addReq').onclick=()=>addRequirement();
+let currentStateData={};
+function addRequirement(value=''){const row=document.createElement('div');row.className='req';row.innerHTML=`<input type="text" value="${String(value).replaceAll('"','&quot;')}" placeholder="例如：30 秒超时；只允许只读工具"><button class="delete" type="button">删除</button>`;row.querySelector('input').oninput=render;row.querySelector('button').onclick=()=>{row.remove();render()};document.querySelector('#requirements').appendChild(row)}
+document.querySelector('#addReq').onclick=()=>addRequirement();
 function selectedCitations(kind,data,key){const keys=[...document.querySelectorAll(`input[data-kind="${kind}"]:checked`)].map(x=>x.dataset.key);return data.filter(x=>keys.includes(x[key])).map(x=>({title:x.title||x.project,url:x.url,reason:x.description}))}
-function data(){return{project_name:document.querySelector('#project').value.trim(),project_path:document.querySelector('#path').value.trim(),language:document.querySelector('#language').value,tooling:document.querySelector('#tooling').value,agent_type:document.querySelector('#agentType').value,starting_point:document.querySelector('#starting').value,use_case:document.querySelector('#usecase').value.trim(),capabilities:[...document.querySelectorAll('#caps input:checked')].map(x=>x.value),requirements:[...document.querySelectorAll('#requirements input')].map(x=>x.value.trim()).filter(Boolean),wrapper_chain:['my-agent-sdk','new-agent-sdk','agent-sdk-dev'],citations:{official_docs:selectedCitations('doc',DOCS,'slug'),demo_projects:selectedCitations('demo',DEMOS,'project'),demo_warning:'Anthropic demos are for local development only; do not deploy directly to production or at scale.'},session_id:sessionId}}
-function render(){const d=data();document.querySelector('#summary').textContent=JSON.stringify(d,null,2);document.querySelector('#docCount').textContent=`已选 ${d.citations.official_docs.length} / ${DOCS.length}`;document.querySelector('#demoCount').textContent=`已选 ${d.citations.demo_projects.length} / ${DEMOS.length}`;document.querySelector('#status').textContent=d.project_name&&d.use_case?'配置完整，可以导出。':'请先填写项目名和用途。'}
-function valid(){const d=data();if(!d.project_name){document.querySelector('#project').focus();return false}if(!d.use_case){document.querySelector('#usecase').focus();return false}return true}
-document.querySelectorAll('input,textarea,select').forEach(x=>x.addEventListener('input',render));document.querySelector('#language').addEventListener('change',recommend);capEl.addEventListener('change',recommend);document.querySelectorAll('.toggle input').forEach(x=>x.addEventListener('change',render));
+function data(){return{operation:document.querySelector('#operation').value,project_name:document.querySelector('#project').value.trim(),project_path:document.querySelector('#path').value.trim(),language:document.querySelector('#language').value,tooling:document.querySelector('#tooling').value,agent_type:document.querySelector('#agentType').value,starting_point:document.querySelector('#starting').value,use_case:document.querySelector('#usecase').value.trim(),requested_changes:document.querySelector('#requestedChanges').value.trim(),current_state:currentStateData,capabilities:[...document.querySelectorAll('#caps input:checked')].map(x=>x.value),requirements:[...document.querySelectorAll('#requirements input')].map(x=>x.value.trim()).filter(Boolean),interaction:'html-form',wrapper_chain:['my-agent-sdk','new-agent-sdk','agent-sdk-dev'],citations:{official_docs:selectedCitations('doc',DOCS,'slug'),demo_projects:selectedCitations('demo',DEMOS,'project'),demo_warning:'Anthropic demos are for local development only; do not deploy directly to production or at scale.'},session_id:sessionId}}
+function render(){const d=data(),improve=d.operation==='improve';document.querySelector('#changeField').hidden=!improve;document.querySelector('#currentStatePanel').hidden=!improve||!Object.keys(currentStateData).length;document.querySelector('#currentState').textContent=JSON.stringify(currentStateData,null,2);document.querySelector('#summary').textContent=JSON.stringify(d,null,2);document.querySelector('#docCount').textContent=`已选 ${d.citations.official_docs.length} / ${DOCS.length}`;document.querySelector('#demoCount').textContent=`已选 ${d.citations.demo_projects.length} / ${DEMOS.length}`;const complete=d.project_name&&d.use_case&&(!improve||(d.project_path&&d.requested_changes));document.querySelector('#status').textContent=complete?`${improve?'改进':'创建'}配置完整，可以导出。`:improve?'请填写项目路径和改进目标。':'请填写项目名和用途。'}
+function valid(){const d=data();for(const [ok,id] of [[d.project_name,'project'],[d.use_case,'usecase'],[d.operation!=='improve'||d.project_path,'path'],[d.operation!=='improve'||d.requested_changes,'requestedChanges']]){if(!ok){document.querySelector('#'+id).focus();return false}}return true}
+function applyPrefill(p={}){const values={operation:p.operation,project:p.project_name,path:p.project_path,language:p.language,tooling:p.tooling,agentType:p.agent_type,starting:p.starting_point,usecase:p.use_case,requestedChanges:p.requested_changes};for(const [id,value] of Object.entries(values)){if(value!==undefined&&value!==null&&document.querySelector('#'+id))document.querySelector('#'+id).value=value}currentStateData=p.current_state||{};document.querySelectorAll('#caps input').forEach(x=>x.checked=(p.capabilities||[]).includes(x.value));document.querySelector('#requirements').innerHTML='';(p.requirements?.length?p.requirements:['不要写入真实 secret；.env 必须忽略']).forEach(addRequirement);if(p.citations){document.querySelectorAll('.toggle input').forEach(x=>x.checked=false);for(const x of p.citations.official_docs||[])setChecked('doc',x.slug||DOCS.find(d=>d.url===x.url)?.slug);for(const x of p.citations.demo_projects||[])setChecked('demo',x.project||DEMOS.find(d=>d.url===x.url)?.project)}recommend()}
+document.querySelectorAll('input,textarea,select').forEach(x=>x.addEventListener('input',render));document.querySelector('#language').addEventListener('change',recommend);document.querySelector('#operation').addEventListener('change',render);capEl.addEventListener('change',recommend);document.querySelectorAll('.toggle input').forEach(x=>x.addEventListener('change',render));
 document.querySelectorAll('.tab[data-target]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelector('#'+b.dataset.target).scrollIntoView({behavior:'smooth'})});
-function blobExport(){if(!valid())return;const b=new Blob([JSON.stringify(data(),null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='my-agent-sdk-build-intake.json';a.click();URL.revokeObjectURL(u);document.querySelector('#status').textContent='已导出。回到 Pi，告诉我“已完成”。'}
-document.querySelector('#export').onclick=blobExport;document.querySelector('#copy').onclick=async()=>{if(!valid())return;await navigator.clipboard.writeText('请使用 my-agent-sdk，并将以下配置交给 new-agent-sdk：\n```json\n'+JSON.stringify(data(),null,2)+'\n```');document.querySelector('#status').textContent='已复制，可粘贴回 Pi。'};recommend();
+document.querySelector('#import').onclick=()=>document.querySelector('#importFile').click();document.querySelector('#importFile').onchange=async e=>{try{applyPrefill(JSON.parse(await e.target.files[0].text()));document.querySelector('#status').textContent='已导入并预填，可以继续编辑。'}catch{document.querySelector('#status').textContent='JSON 无法读取，请检查文件格式。'}};
+function blobExport(){if(!valid())return;const d=data(),b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=`my-agent-sdk-${d.operation}-intake.json`;a.click();URL.revokeObjectURL(u);document.querySelector('#status').textContent='已导出。回到 Pi，告诉我“已完成”。'}
+document.querySelector('#export').onclick=blobExport;document.querySelector('#copy').onclick=async()=>{if(!valid())return;await navigator.clipboard.writeText('请使用 my-agent-sdk，并将以下配置交给 new-agent-sdk：\n```json\n'+JSON.stringify(data(),null,2)+'\n```');document.querySelector('#status').textContent='已复制，可粘贴回 Pi。'};
+const query=Object.fromEntries(new URLSearchParams(location.search));applyPrefill({...PREFILL,...query});
 </script></body></html>'''
 
 if __name__ == "__main__":

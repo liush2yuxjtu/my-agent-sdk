@@ -1,18 +1,26 @@
 ---
 name: my-agent-sdk
-description: 以可导出的中文 HTML 配置器包装并驱动 new-agent-sdk，创建或初始化 Claude Agent SDK 应用。凡用户要搭建、脚手架化、启动 Claude Agent SDK 项目，或涉及 streaming、AskUserQuestion、MCP、自定义工具、权限、会话、子代理时，都优先使用本技能；它会强制给出 Anthropic 官方逐功能 URL 引用和 claude-agent-sdk-demos 逐 demo 引用。
+description: 以引用驱动的交互流程创建新的或改进现有的 Claude Agent SDK 应用。凡用户要 scaffold/start/create Agent SDK 项目，或 upgrade/improve/refactor/fix 已有 Agent SDK 项目，都优先使用本技能。支持聊天内逐题交互与可预填、可导出的中文 HTML 表单；必须调用 new-agent-sdk 的需求与官方文档流程，并由 agent-sdk-dev 验证。
 compatibility: 需要 read、bash、write/edit；macOS 用 open 打开 HTML；依赖本机已安装的 new-agent-sdk、agent-sdk-dev 与 html-artifacts 技能。
 license: Apache-2.0
 metadata:
   wrapper-target: new-agent-sdk
+  modes: create, improve
   upstream: anthropics/claude-plugins-official/plugins/agent-sdk-dev/commands/new-sdk-app.md
 ---
 
 # My Agent SDK
 
-用 HTML 完成需求收集和计划确认，再把结构化答案交给 `new-agent-sdk` 执行。不要复制或改写底层脚手架流程；本技能只增加交互、引用和交付层。
+为 `new-agent-sdk` 增加双模式、双交互入口和引用账本：
 
-## 1. 先加载底层技能
+- **create**：创建新的 Agent SDK 应用。
+- **improve**：先只读理解已有 Agent SDK 项目，再按用户目标最小修改。
+- **in-chat**：在聊天中一次问一个尚未回答的问题。
+- **HTML form**：自动检测当前目录并预填表单，也可在浏览器中导入旧 JSON。
+
+不要复制或替代底层 SDK 实现流程。
+
+## 1. 必须加载的技能
 
 完整读取并遵循：
 
@@ -20,94 +28,114 @@ metadata:
 - `/Users/liushiyuwin/.pi/agent/skills/agent-sdk-dev/SKILL.md`
 - `/Users/liushiyuwin/.pi/agent/skills/html-artifacts/SKILL.md`
 
-`new-agent-sdk` 是实现流程的唯一来源。若本技能与它冲突，以安全、官方文档时效性和验证要求更严格者为准。
+`new-agent-sdk` 仍是需求、官方文档、版本核验和新项目实现的来源。`improve` 模式复用这些规则，但不得重新初始化或覆盖已有项目。
 
-## 2. 用 HTML 收集需求
+## 2. 智能判断模式
 
-不要在聊天里逐题询问。运行：
+按用户意图自动选择，不要先让用户填命令参数：
+
+- 出现“新建、创建、初始化、scaffold、start” → `create`。
+- 出现“改进、升级、修复、重构、增加能力、已有项目” → `improve`。
+- 当前目录已包含 `claude-agent-sdk` / `@anthropic-ai/claude-agent-sdk` 依赖或调用，且用户意图未明确 → 默认 `improve`。
+- 仍无法判断时，只问一次：“创建新项目，还是改进现有项目？”
+
+## 3. 选择交互入口
+
+用户指定 HTML/表单/可视化时使用 HTML；用户指定聊天、当前环境无法打开浏览器，或只剩少量信息时使用 in-chat。用户未指定时：
+
+- 已有项目 → 先检测并打开预填 HTML。
+- 新项目 → 打开 HTML。
+- 用户直接在聊天中给出答案 → 继续 in-chat，不强迫切换媒介。
+
+### In-chat
+
+一次只问一个尚未回答的问题。create 使用 `new-agent-sdk` 的六项需求；improve 依次确认：
+
+1. 项目路径（若当前目录不是目标项目）。
+2. 希望改变什么行为。
+3. 哪些现有行为必须保持。
+4. 是否允许依赖升级。
+5. 需要新增或删除哪些能力。
+
+已有答案直接预填并跳过。回答齐全后，在聊天中给出简短计划并等待明确确认。
+
+### HTML form
+
+不要要求用户拼 `--args`。若目标项目不是当前目录，先 `cd` 到目标目录，然后直接运行：
 
 ```bash
-python3 /Users/liushiyuwin/.pi/agent/skills/my-agent-sdk/scripts/create_intake.py \
-  --output /tmp/my-agent-sdk-intake.html \
-  --session-id "${TERM_SESSION_ID:-unknown}"
+python3 /Users/liushiyuwin/.pi/agent/skills/my-agent-sdk/scripts/create_intake.py
 open /tmp/my-agent-sdk-intake.html
 ```
 
-配置器必须保留：
+脚本会智能检测当前目录：
 
-- 输入框：项目名、自定义用途、项目目录、可增删的额外约束。
-- 单选：TypeScript/Python、起点、包管理器。
-- 多选框：streaming、AskUserQuestion、MCP、permissions、sessions、subagents、custom tools 等。
-- **官方文档逐 URL 引用矩阵**：显示页面标题、完整 URL、用途与“纳入引用”开关。
-- **Anthropic demos 逐项目引用矩阵**：显示具体项目 URL、可借鉴点与“纳入引用”开关。
-- 引用矩阵的表格、开关、增删行和导出文案沿用 skill-creator eval HTML 的直接、可编辑风格。
-- 明确的状态摘要、校验提示、`导出构建配置 JSON` 按钮和 `复制为提示词` 按钮；导出的 JSON 必须携带所选引用账本。
+- 发现 Agent SDK 依赖/调用 → 自动切到 `improve`，预填项目名、路径、语言、包管理器、SDK 版本和已检测能力。
+- 未发现 → 使用 `create` 空白模板。
+- 页面允许切换 create/improve、导入旧 JSON、继续编辑并导出。
 
-请用户完成配置并点击导出。读取 `~/Downloads/my-agent-sdk-intake*.json` 中最新文件。若浏览器禁止下载，让用户使用“复制为提示词”并粘贴回来。
+表单必须保留：输入框、多选框、引用开关、实时 JSON、`复制为提示词` 和 `导出配置 JSON`。
 
-这份 JSON 已回答 `new-agent-sdk` 的需求问题，因此按其“已回答则跳过”规则直接进入计划；不要重复询问。
+## 4. Improve 模式先只读检查
 
-## 3. 逐 URL 核验官方资料
+编辑前必须检查真实项目，而不是只信预填：
 
-在写代码前，访问并按所选能力逐页核验。不能只引用 overview：
+1. 读取依赖清单、锁文件、运行时版本、入口点和测试命令。
+2. 搜索 `query()`、streaming、AskUserQuestion、MCP、permissions、sessions、subagents、hooks 和 custom tools 的真实调用。
+3. 找出所有即将修改函数的调用方。
+4. 记录当前 SDK 版本与用户要求保持的行为。
+5. 不读取或回显 `.env`、凭据和密钥值。
 
-- 总览：<https://code.claude.com/docs/zh-CN/agent-sdk/overview>
-- 快速开始：<https://code.claude.com/docs/zh-CN/agent-sdk/quickstart>
-- 代理循环：<https://code.claude.com/docs/zh-CN/agent-sdk/agent-loop>
-- 自定义工具/MCP：<https://code.claude.com/docs/zh-CN/agent-sdk/custom-tools>
-- 流式输出：<https://code.claude.com/docs/zh-CN/agent-sdk/streaming-output>
-- 会话：<https://code.claude.com/docs/zh-CN/agent-sdk/sessions>
-- 权限：<https://code.claude.com/docs/zh-CN/agent-sdk/permissions>
+若目录不是 Agent SDK 项目，说明证据并让用户选择改为 create 或提供正确路径。
 
-只引用实际核验过的页面。每条设计决策后紧跟对应页面链接，而不是把所有链接堆在文末。
+## 5. 引用要求
 
-## 4. 逐 demo 引用实现先例
+完整读取 `references/citations.md`。写代码前按实际能力逐页访问当前文档；每条设计决策紧跟对应具体 URL，不能只引用 overview。
 
-完整读取 `references/citations.md`。按能力给出具体 demo 链接与借鉴点：
+逐项目引用 Anthropic demos，例如：
 
-- 最小 `query()`：`hello-world`
-- WebSocket + 流式聊天：`simple-chatapp`
-- `AskUserQuestion` 浏览器阻塞往返：`ask-user-question-previews`
-- 子代理编排与 hooks：`research-agent`
+- `hello-world`：最小 `query()`。
+- `simple-chatapp`：WebSocket 流式聊天。
+- `ask-user-question-previews`：AskUserQuestion 阻塞往返。
+- `research-agent`：子代理与 hooks。
 
-不要把 demos 当生产规范。必须同时引用仓库根 README 的“仅本地演示、不要直接用于生产”警告，并说明哪些部分需要生产加固。
+同时引用 demo 仓库“仅供本地开发、不可直接用于生产”的警告。demo 与当前官方文档冲突时，以当前文档为准。
 
-## 5. 用 HTML 确认计划
+## 6. 计划确认
 
-根据导出的 JSON 与已核验资料，生成一个自包含计划确认 HTML：
+create 计划列出将创建的文件。improve 计划列出：
 
-- 列出项目路径、文件清单、能力与验证命令。
-- 每项计划用复选框；保留一个“补充要求”输入框。
-- 提供 `导出确认 JSON` 和 `复制确认提示词`。
-- 清晰标注来源项目名、绝对路径和当前 Pi session ID。
-- 使用短而具体的 UX 文案，如“导出并开始创建”，不要用“提交”。
+- 当前状态与目标差异。
+- 将修改/新增/保持不变的文件。
+- 依赖是否升级。
+- 回归检查与回滚边界。
 
-打开 HTML，等待用户导出确认；未确认前不要创建项目文件。这一步落实 `new-agent-sdk` 的计划确认门。
+HTML 路径直接运行 `create_plan_review.py`；它会自动读取当前目录或 Downloads 中最新的 intake JSON 并生成 `/tmp/my-agent-sdk-plan-review.html`，不要求命令参数。未确认前不写项目。
 
-## 6. 调用 new-agent-sdk 实施
+## 7. 实施
 
-把已确认 JSON 作为已回答需求，严格执行 `new-agent-sdk`：
+### Create
 
-1. 核验 npm/PyPI 最新稳定版本。
-2. 只实现所选能力。
-3. `.env.example` 不含真实 secret，`.env` 进入忽略列表。
-4. 有界错误处理和取消。
-5. `AskUserQuestion` 必须完成同一次 SDK run 的 UI 阻塞往返；不能用普通助手文本冒充。
-6. 完成后按 `agent-sdk-dev` 对应语言清单验证。
+把已确认答案交给 `new-agent-sdk`，严格执行其初始化、版本核验、安全和验证要求。
 
-## 7. 输出引用账本
+### Improve
 
-最终交付使用中文 HTML，并在“为什么这样实现”中逐条写：
+复用 `new-agent-sdk` 的当前文档、依赖、安全和能力实现规则，但只做目标所需的最小 diff：
+
+- 不重新初始化项目。
+- 不覆盖现有配置。
+- 不添加未请求能力。
+- 先保留或补一条能证明目标行为的最小回归检查。
+- 依赖升级必须由目标或当前官方 API 要求驱动。
+
+两种模式都必须：隐藏 secret、提供取消/错误边界、真实完成 AskUserQuestion 同一 run 往返，并用 `agent-sdk-dev` 对应语言清单验证。
+
+## 8. 交付
+
+最终使用中文 HTML 报告：
 
 ```text
-设计决策 → 官方文档具体 URL → 对应 demo 具体 URL → 本项目采用/未采用的部分
+变更目标 → 当前/新实现 → 官方文档具体 URL → demo 具体项目 URL → 验证证据
 ```
 
-至少包含一个官方页面和一个具体 demo；涉及多项能力时逐项引用。报告 SDK 版本、执行命令、输出路径、验证状态与剩余风险。
-
-## 8. 失败边界
-
-- 官方页面不可访问：暂停实现并报告具体 URL 与错误，不用记忆替代。
-- demo 与官方文档冲突：采用当前官方文档，并标注 demo 仅作结构参考。
-- HTML 导出缺失或计划未确认：不开始创建项目。
-- 验证失败：继续修复，不宣告成功。
+报告 operation、SDK 版本、命令、修改路径、验证状态与剩余风险。验证失败时继续修复，不宣告成功。
