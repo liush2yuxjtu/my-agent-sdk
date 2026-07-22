@@ -1,5 +1,8 @@
 # my-agent-sdk
 
+> **尽览官方能力，一站创建与升级 Agent。**  
+> *Explore every official capability. Build or improve in one flow.*
+
 用**聊天内交互**或**可预填、可导出的中文 HTML 配置器**创建新的或改进现有的 Claude Agent SDK 应用。已有项目会自动检测语言、包管理器、SDK 版本和能力；两种模式都沿用 `new-agent-sdk` 的官方文档与实现规则。
 
 > `my-agent-sdk` 不重写脚手架逻辑。它明确依赖并调用 **[`new-agent-sdk`](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/agent-sdk-dev/commands/new-sdk-app.md)**；该流程来自 Anthropic 官方 [`agent-sdk-dev` 插件](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/agent-sdk-dev)。

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>my-agent-sdk · 创建或改进 Agent SDK</title>
+<title>my-agent-sdk · 尽览官方能力，一站创建与升级 Agent</title>
 <link rel="alternate" hreflang="zh-CN" href="https://liush2yuxjtu.github.io/my-agent-sdk/">
 <link rel="alternate" hreflang="en" href="https://liush2yuxjtu.github.io/my-agent-sdk/en/">
 <style>
@@ -19,7 +19,10 @@
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--serif);-webkit-font-smoothing:antialiased}
 h1,h2,h3,h4,button,a.btn,.chip,.badge,.num{font-family:var(--sans)}
+h1,h2,h3{text-wrap:balance}
+p,li{text-wrap:pretty}
 a{color:inherit}
+:focus-visible{outline:3px solid var(--accent-ring);outline-offset:3px}
 .wrap{max-width:1140px;margin:auto;padding:0 22px}
 
 /* ---------- nav ---------- */
@@ -37,14 +40,12 @@ nav .links a:hover{color:var(--ink)}
 .btn-ghost{background:#fff;border-color:var(--line);color:var(--ink)}
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
 .btn-dark{background:var(--dark);color:#fff}
-.btn-sm{padding:8px 14px;font-size:13px}
+.btn-sm{min-height:40px;padding:8px 14px;font-size:13px}
 
 /* ---------- hero ---------- */
-.hero{position:relative;overflow:hidden;padding:96px 0 84px}
-.hero-bg{position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(640px 340px at 82% 12%,#d9775714,transparent 65%),
-             radial-gradient(520px 300px at 8% 88%,#1c1c1908,transparent 60%)}
-.hero .wrap{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+.hero{position:relative;overflow:hidden;padding:82px 0 70px}
+.hero-bg{position:absolute;inset:0;pointer-events:none;background:linear-gradient(100deg,transparent 58%,#f1ede4 58%)}
+.hero .wrap{position:relative;display:grid;grid-template-columns:.94fr 1.06fr;gap:58px;align-items:center}
 .badge{display:inline-flex;align-items:center;gap:7px;font:700 12px var(--sans);background:#ece8de;border-radius:99px;padding:6px 12px;letter-spacing:.04em}
 .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
 .hero h1{font-size:clamp(40px,5.6vw,72px);line-height:.98;letter-spacing:-.04em;margin:20px 0 18px}
@@ -54,16 +55,11 @@ nav .links a:hover{color:var(--ink)}
 .hero-note{margin-top:18px;font:12px var(--mono);color:#8a8478}
 
 /* hero JSON card */
-.hero-card{background:var(--dark-2);border-radius:14px;padding:22px 22px 18px;box-shadow:0 24px 60px #211a0b26,0 2px 0 #ffffff10 inset;transform:rotate(1.2deg);transition:transform .4s}
-.hero-card:hover{transform:rotate(0)}
-.hero-card-head{display:flex;align-items:center;gap:8px;margin-bottom:14px}
-.hero-card-head i{width:10px;height:10px;border-radius:50%;background:#3a3f3a}
-.hero-card-head i:first-child{background:var(--accent)}
-.hero-card-head span{margin-left:auto;font:11px var(--mono);color:#8f968f}
-.hero-card pre{margin:0;font:12px/1.7 var(--mono);color:#f4efe4;white-space:pre-wrap}
-.hero-card .k{color:#e8a288}.hero-card .s{color:#a8c69f}.hero-card .c{color:#6f766f}
-.hero-card-foot{margin-top:14px;padding-top:12px;border-top:1px solid #313631;display:flex;justify-content:space-between;font:11px var(--mono);color:#8f968f}
-.hero-card-foot b{color:#f4efe4}
+.hero-demo{background:var(--dark-2);border:1px solid #2c312c;border-radius:18px;padding:10px;box-shadow:0 28px 70px #211a0b2b}
+.hero-demo video{display:block;width:100%;aspect-ratio:16/9;border-radius:11px;background:#0d110e;outline:1px solid #ffffff14;outline-offset:-1px}
+.hero-demo-meta{display:flex;align-items:center;gap:10px;padding:11px 5px 2px;color:#a8afa8;font:11px var(--mono)}
+.hero-demo-meta strong{color:#f4efe4;font-family:var(--sans)}
+.hero-demo-meta span:last-child{margin-left:auto;color:#e8a288}
 
 /* ---------- stats ---------- */
 .stats{border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);background:#fff}
@@ -80,11 +76,6 @@ section{padding:88px 0}
 .sec-head .badge{margin-bottom:14px}
 .sec-head h2{font-size:clamp(28px,3.6vw,42px);letter-spacing:-.03em;line-height:1.08;margin:0 0 12px}
 .sec-head p{margin:0;color:var(--ink-soft);font-size:16px}
-
-/* video demo */
-.video-shell{background:var(--dark-2);border-radius:16px;padding:12px;box-shadow:0 28px 70px #211a0b2b}
-.video-shell video{display:block;width:100%;aspect-ratio:16/9;border-radius:10px;background:#0d110e}
-.video-note{display:flex;justify-content:space-between;gap:16px;margin-top:12px;color:var(--ink-soft);font:12px var(--sans)}
 
 /* embedded improve flow */
 .improve-dialog{width:min(1180px,calc(100vw - 40px));height:min(900px,calc(100dvh - 40px));padding:0;border:1px solid var(--line);border-radius:16px;background:var(--bg);box-shadow:0 30px 90px #17171355;overflow:hidden}
@@ -161,11 +152,11 @@ footer .wrap{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
 footer .prov{font:11px var(--mono);color:#8a8478;word-break:break-all}
 footer .sp{flex:1}
 
-/* reveal */
-.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
-.reveal.in{opacity:1;transform:none}
+/* content stays visible without JavaScript; motion is progressive enhancement */
+.reveal{opacity:1;transform:none}
 
 @media(max-width:960px){
+  .hero-bg{background:none}
   .hero .wrap{grid-template-columns:1fr;gap:40px}
   .steps{grid-template-columns:1fr 1fr}
   .step::after{display:none}
@@ -178,10 +169,16 @@ footer .sp{flex:1}
   nav .links{display:none}
 }
 @media(max-width:560px){
+  .hero{padding:58px 0 52px}
+  .hero h1{font-size:clamp(42px,14vw,60px)}
+  .hero-demo{border-radius:13px;padding:7px}
+  .hero-demo-meta{font-size:10px;flex-wrap:wrap}
+  .hero-demo-meta span:last-child{margin-left:0;width:100%}
   .caps{grid-template-columns:1fr 1fr}
   .steps{grid-template-columns:1fr}
   section{padding:64px 0}
 }
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
@@ -205,29 +202,20 @@ footer .sp{flex:1}
   <div class="wrap">
     <div>
       <span class="badge"><span class="dot"></span>MY-AGENT-SDK → NEW-AGENT-SDK</span>
-      <h1>用<em>证据</em><br>配置你的 Agent。</h1>
-      <p class="lede">创建新的或改进现有的 Agent SDK：自动检测已有项目并预填，也支持聊天内逐题交互。导出的 JSON 同时包含目标、现状、官方文档逐 URL 账本和 Anthropic 示例逐项目账本。</p>
+      <h1>尽览官方能力，<br>一站创建与升级 <em>Agent</em>。</h1>
+      <p class="lede">实时探索 Agent SDK 文档与官方 Demo，盘点已有能力，推荐下一步；从新建到升级，一个流程完成。</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="intake.html">创建新项目 →</a>
         <a class="btn btn-ghost" href="intake.html?operation=improve" data-open-improve>改进现有项目 · 当前页试用</a>
       </div>
       <p class="hero-note">$ pi run my-agent-sdk · 输出 my-agent-sdk-build-intake.json</p>
     </div>
-    <div class="hero-card reveal">
-      <div class="hero-card-head"><i></i><i></i><i></i><span>my-agent-sdk-build-intake.json</span></div>
-<pre><span class="c">// 导出即证据</span>{
-  <span class="k">"project_name"</span>: <span class="s">"support-agent"</span>,
-  <span class="k">"language"</span>: <span class="s">"TypeScript"</span>,
-  <span class="k">"capabilities"</span>: [
-    <span class="s">"streaming"</span>, <span class="s">"AskUserQuestion"</span>,
-    <span class="s">"sessions"</span>
-  ],
-  <span class="k">"citations"</span>: {
-    <span class="k">"official_docs"</span>: [<span class="c">/* 逐 URL */</span> … ],
-    <span class="k">"demo_projects"</span>: [<span class="c">/* 逐项目 */</span> … ]
-  }
-}</pre>
-      <div class="hero-card-foot"><span>wrapper_chain: my-agent-sdk → new-agent-sdk</span><b>✓ 可导出</b></div>
+    <div class="hero-demo" id="demo-video">
+      <video controls muted playsinline preload="none" poster="my-agent-sdk-pi-session-zh-poster.jpg" aria-label="my-agent-sdk 真实 Pi 中文会话演示">
+        <source src="my-agent-sdk-pi-session-zh.webm" type="video/webm">
+        你的浏览器不支持 WebM 视频。<a href="my-agent-sdk-pi-session-zh.webm">下载演示视频</a>。
+      </video>
+      <div class="hero-demo-meta"><strong>真实 Pi 会话</strong><span>探索 → 建议 → 最终确认门</span><span>1280 × 720 · WebM</span></div>
     </div>
   </div>
 </header>
@@ -240,23 +228,6 @@ footer .sp{flex:1}
     <div class="stat reveal"><div class="num"><i>1</i></div><p>份 JSON · 全部说清</p></div>
   </div>
 </div>
-
-<section id="demo-video">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="badge">REAL PI SESSION</span>
-      <h2>看一次真实的交互访谈。</h2>
-      <p>实际运行 Pi 与 my-agent-sdk：探索来源、盘点现状、提出建议，并在最终确认门前停下。</p>
-    </div>
-    <div class="video-shell reveal">
-      <video controls muted playsinline preload="metadata" poster="my-agent-sdk-pi-session-zh-poster.jpg">
-        <source src="my-agent-sdk-pi-session-zh.webm" type="video/webm">
-        你的浏览器不支持 WebM 视频。
-      </video>
-    </div>
-    <div class="video-note"><span>1280 × 720 · WebM · 真实 Pi 会话 · openai-codex/gpt-5.6-sol · medium</span><a href="my-agent-sdk-pi-session-zh.webm">下载视频</a></div>
-  </div>
-</section>
 
 <section id="flow">
   <div class="wrap">
@@ -397,10 +368,6 @@ footer .sp{flex:1}
 </footer>
 
 <script>
-/* reveal on scroll */
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
-document.querySelectorAll('.reveal').forEach(x=>io.observe(x));
-
 /* count-up stats */
 const cio=new IntersectionObserver(es=>es.forEach(e=>{
   if(!e.isIntersecting)return;cio.unobserve(e.target);
