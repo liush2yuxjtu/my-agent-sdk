@@ -25,6 +25,12 @@ DOCS = [
     ("subagents", "子代理", "专门代理与委派", "tools"),
     ("skills", "Skills", "代理技能加载", "tools"),
     ("plugins", "Plugins", "插件扩展", "tools"),
+    ("claude-code-features", "Claude Code 功能", "复用 Claude Code 能力", "composition"),
+    ("modifying-system-prompts", "修改系统提示词", "系统提示词替换与追加", "composition"),
+    ("slash-commands", "斜杠命令", "命令式工作流入口", "composition"),
+    ("todo-tracking", "Todo 跟踪", "代理任务进度", "composition"),
+    ("tool-search", "工具搜索", "按需发现大型工具集", "tools"),
+    ("migration-guide", "迁移指南", "旧版 SDK 升级", "core"),
     ("file-checkpointing", "文件检查点", "文件变更回退", "production"),
     ("hosting", "托管", "部署拓扑与运行环境", "production"),
     ("secure-deployment", "安全部署", "生产安全边界", "production"),
@@ -42,6 +48,24 @@ DEMOS = [
     ("excel-demo", "Electron 桌面端与表格代理集成", "desktop"),
     ("resume-generator", "WebSearch + docx 生成的单任务代理", "business"),
 ]
+
+
+def current_sources() -> tuple[list[dict], list[dict]]:
+    """Build the form from the refreshed URL snapshot, with labels as optional metadata."""
+    snapshot = json.loads((Path(__file__).resolve().parents[1] / "references" / "source-packs.json").read_text(encoding="utf-8"))
+    doc_meta = {slug: (title, description, group) for slug, title, description, group in DOCS}
+    demo_meta = {name: (description, tag) for name, description, tag in DEMOS}
+    docs = []
+    for url in snapshot["packs"]["agent_sdk_docs"]["urls"]:
+        slug = url.rstrip("/").rsplit("/", 1)[-1]
+        title, description, group = doc_meta.get(slug, (slug.replace("-", " ").title(), "实时发现的官方 Agent SDK 页面", "discovered"))
+        docs.append({"slug": slug, "title": title, "description": description, "group": group, "url": url})
+    demos = []
+    for url in snapshot["packs"]["agent_sdk_demos"]["urls"]:
+        name = url.rstrip("/").rsplit("/", 1)[-1]
+        description, tag = demo_meta.get(name, ("实时发现的 Anthropic Agent SDK demo", "discovered"))
+        demos.append({"project": name, "description": description, "tag": tag, "url": url})
+    return docs, demos
 
 
 def detect_project(root: Path) -> dict:
@@ -101,6 +125,13 @@ def detect_project(root: Path) -> dict:
         "custom tools": ("createSdkMcpServer" in source or "@tool" in source or "tool(" in source),
         "structured outputs": ("outputFormat" in source or "json_schema" in source),
         "hooks": ("PreToolUse" in source or "PostToolUse" in source or "hooks" in source),
+        "skills and plugins": ("settingSources" in source or "plugins" in source or "skills" in source),
+        "Claude Code features": ("settingSources" in source or "CLAUDE.md" in source),
+        "system prompts": ("systemPrompt" in source),
+        "slash commands": ("slash" in source or "commands" in source),
+        "todo tracking": ("TodoWrite" in source or "todo" in source.lower()),
+        "tool search": ("ToolSearch" in source or "toolSearch" in source),
+        "file checkpointing": ("checkpoint" in source.lower()),
     }
     name = data.get("name") or root.name
     return {
@@ -123,18 +154,13 @@ def main() -> None:
     prefill = detect_project(root)
     session_id = os.environ.get("TERM_SESSION_ID", "unknown")
     output = Path("/tmp/my-agent-sdk-intake.html")
+    docs, demos = current_sources()
     html = (TEMPLATE.replace("__SESSION_HTML__", escape(session_id))
             .replace("__SESSION_JSON__", json.dumps(session_id))
             .replace("__PROJECT__", PROJECT)
             .replace("__PREFILL__", json.dumps(prefill, ensure_ascii=False).replace("</", "<\\/"))
-            .replace("__DOCS__", json.dumps([
-                {"slug": s, "title": t, "description": d, "group": g,
-                 "url": f"https://code.claude.com/docs/zh-CN/agent-sdk/{s}"}
-                for s, t, d, g in DOCS], ensure_ascii=False))
-            .replace("__DEMOS__", json.dumps([
-                {"project": n, "description": d, "tag": tag,
-                 "url": f"https://github.com/anthropics/claude-agent-sdk-demos/tree/main/{n}"}
-                for n, d, tag in DEMOS], ensure_ascii=False)))
+            .replace("__DOCS__", json.dumps(docs, ensure_ascii=False))
+            .replace("__DEMOS__", json.dumps(demos, ensure_ascii=False)))
     output.write_text(html, encoding="utf-8")
     print(output)
 
@@ -149,9 +175,9 @@ TEMPLATE = r'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><me
 <section class="panel" id="export-section"><h2>导出前检查</h2><p>导出后，<code>my-agent-sdk</code> 会把已回答需求交给 <code>new-agent-sdk</code>；后者仍负责当前文档核验、实现与验证。</p><pre class="summary" id="summary"></pre></section><p class="provenance">来源项目：my-agent-sdk · 绝对路径：__PROJECT__ · Pi session ID：__SESSION_HTML__</p></main><footer class="footerbar"><span class="status" id="status">请先填写项目名和用途。</span><input id="importFile" type="file" accept="application/json" hidden><button class="tab" id="import">导入旧 JSON</button><button class="secondary" id="copy">复制为提示词</button><button class="primary" id="export">导出配置 JSON</button></footer>
 <script>
 const DOCS=__DOCS__,DEMOS=__DEMOS__,PREFILL=__PREFILL__,sessionId=__SESSION_JSON__;
-const capabilities=[['streaming','流式输出'],['AskUserQuestion','AskUserQuestion'],['MCP','MCP'],['permissions','权限'],['sessions','会话'],['subagents','子代理'],['custom tools','自定义工具'],['structured outputs','结构化输出'],['hooks','Hooks'],['production hardening','生产加固']];
-const mapDocs={streaming:['streaming-output','streaming-vs-single-mode','agent-loop'],AskUserQuestion:['user-input','permissions','agent-loop'],MCP:['mcp','custom-tools'],permissions:['permissions','hooks'],sessions:['sessions','session-storage'],subagents:['subagents','hooks'],['custom tools']:['custom-tools','mcp'],['structured outputs']:['structured-outputs'],hooks:['hooks'],['production hardening']:['hosting','secure-deployment','observability','cost-tracking']};
-const mapDemos={streaming:['simple-chatapp'],AskUserQuestion:['ask-user-question-previews'],sessions:['hello-world-v2','simple-chatapp'],subagents:['research-agent'],hooks:['research-agent'],['custom tools']:['hello-world'],MCP:['hello-world'],['production hardening']:[]};
+const capabilities=[['streaming','流式输出'],['AskUserQuestion','AskUserQuestion'],['MCP','MCP'],['permissions','权限'],['sessions','会话'],['subagents','子代理'],['custom tools','自定义工具'],['structured outputs','结构化输出'],['hooks','Hooks'],['skills and plugins','Skills / Plugins'],['Claude Code features','Claude Code 功能'],['system prompts','系统提示词'],['slash commands','斜杠命令'],['todo tracking','Todo 跟踪'],['tool search','工具搜索'],['file checkpointing','文件检查点'],['migration','SDK 迁移'],['production hardening','生产加固']];
+const mapDocs={streaming:['streaming-output','streaming-vs-single-mode','agent-loop'],AskUserQuestion:['user-input','permissions','agent-loop'],MCP:['mcp','custom-tools'],permissions:['permissions','hooks'],sessions:['sessions','session-storage'],subagents:['subagents','hooks'],['custom tools']:['custom-tools','mcp'],['structured outputs']:['structured-outputs'],hooks:['hooks'],['skills and plugins']:['skills','plugins'],['Claude Code features']:['claude-code-features'],['system prompts']:['modifying-system-prompts'],['slash commands']:['slash-commands'],['todo tracking']:['todo-tracking'],['tool search']:['tool-search'],['file checkpointing']:['file-checkpointing'],migration:['migration-guide'],['production hardening']:['hosting','secure-deployment','observability','cost-tracking']};
+const mapDemos={streaming:['simple-chatapp'],AskUserQuestion:['ask-user-question-previews'],sessions:['hello-world-v2','simple-chatapp'],subagents:['research-agent'],hooks:['research-agent'],['custom tools']:['hello-world'],MCP:['hello-world'],['Claude Code features']:['hello-world'],['file checkpointing']:['hello-world'],migration:['hello-world-v2'],['production hardening']:[]};
 const capEl=document.querySelector('#caps');capabilities.forEach(([v,l])=>capEl.insertAdjacentHTML('beforeend',`<label class="cap"><input type="checkbox" value="${v}"> ${l}</label>`));
 function citationRow(x,type){const key=type==='doc'?x.slug:x.project;return `<tr><td><span class="cite-title">${type==='doc'?x.title:x.project}</span><a class="url" href="${x.url}">${x.url}</a></td><td class="desc">${x.description}</td><td><label class="toggle"><input type="checkbox" data-kind="${type}" data-key="${key}"><span class="slider"></span></label></td></tr>`}
 document.querySelector('#docBody').innerHTML=DOCS.map(x=>citationRow(x,'doc')).join('');document.querySelector('#demoBody').innerHTML=DEMOS.map(x=>citationRow(x,'demo')).join('');

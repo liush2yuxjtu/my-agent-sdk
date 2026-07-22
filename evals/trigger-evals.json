@@ -1,6 +1,6 @@
 [
   {
-    "query": "帮我新建一个 TypeScript Claude Agent SDK 客服项目，npm，支持 streaming 和 sessions；请先用可视化表单让我确认范围。",
+    "query": "帮我新建一个 TypeScript Claude Agent SDK 客服项目，npm，先完整列出官方能力和 demos，再在聊天里问我需要哪些。",
     "should_trigger": true
   },
   {
@@ -12,11 +12,11 @@
     "should_trigger": true
   },
   {
-    "query": "create a minimal claude agent sdk app, node + pnpm, and give me a visual config before writing files",
+    "query": "create a minimal claude agent sdk app, node + pnpm; explore all current docs and demos, then interview me in chat before writing files",
     "should_trigger": true
   },
   {
-    "query": "用 Claude Agent SDK 做带权限白名单的 coding agent，先让我勾选能力，然后生成计划确认页。",
+    "query": "用 Claude Agent SDK 做带权限白名单的 coding agent，先展示 WHAT WE CAN DO，再逐项问我并最终确认。",
     "should_trigger": true
   },
   {
@@ -40,8 +40,8 @@
     "should_trigger": true
   },
   {
-    "query": "审查这个已有的 Claude Agent SDK 项目有没有正确处理 cancellation 和权限。",
-    "should_trigger": false
+    "query": "审查这个已有的 Claude Agent SDK 项目有没有正确处理 cancellation 和权限，并建议还能增加哪些官方能力。",
+    "should_trigger": true
   },
   {
     "query": "解释 Claude Agent SDK 的 agent loop 是怎么工作的，不要创建项目。",
@@ -80,7 +80,7 @@
     "should_trigger": false
   },
   {
-    "query": "当前目录已经有一个 Claude Agent SDK 服务，帮我升级 sessions 并用 HTML 自动预填现有配置。",
+    "query": "当前目录已经有一个 Claude Agent SDK 服务，先探索 WHAT WE HAVE SO FAR，再建议如何升级 sessions。",
     "should_trigger": true
   },
   {
@@ -92,7 +92,7 @@
     "should_trigger": false
   },
   {
-    "query": "只审查这段 Agent SDK 代码，不要创建也不要修改项目。",
+    "query": "只解释这一个 query() 调用的返回类型，不要探索仓库或提出改进方案。",
     "should_trigger": false
   }
 ]

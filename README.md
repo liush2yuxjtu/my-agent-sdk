@@ -67,13 +67,20 @@ python3 ~/.pi/agent/skills/my-agent-sdk/scripts/create_intake.py
 open /tmp/my-agent-sdk-intake.html
 ```
 
+每次访谈固定展示：
+
+1. **WHAT WE CAN DO**：两套来源当前提供的完整能力与链接。
+2. **WHAT WE HAVE SO FAR**：已有项目的真实实现，或新项目状态。
+3. **WHAT IS SUGGESTED TO IMPROVE / ADD**：基于差距的最小建议。
+4. **FINAL CONFIRMATION**：用户确认后才写文件。
+
 配置器支持：
 
 - create / improve 切换
 - 现有项目的语言、包管理器、SDK 版本与能力自动预填
 - 导入旧 JSON 后继续填写
 - 项目信息输入框和能力多选框
-- 24 个官方文档逐 URL、8 个 demo 逐项目引用开关
+- 自动刷新并展示 30 个官方文档逐 URL、8 个 demo 逐项目引用开关
 - 可增删约束、实时 JSON、复制提示词和导出
 
 ## 引用策略
@@ -122,7 +129,9 @@ my-agent-sdk/
 ├── README.md
 ├── artifacts/
 ├── evals/
+├── references/sources.urls
 ├── references/citations.md
+├── references/source-packs.json
 └── scripts/
 ```
 

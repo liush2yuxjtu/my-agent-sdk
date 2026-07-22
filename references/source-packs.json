@@ -1,0 +1,114 @@
+{
+  "refreshed_at": "2026-07-22T01:26:26.032970+00:00",
+  "packs": {
+    "agent_sdk_docs": {
+      "index_url": "https://code.claude.com/docs/zh-CN/agent-sdk/overview",
+      "url_prefix": "https://code.claude.com/docs/zh-CN/agent-sdk/",
+      "discovery": "Extract every unique href under url_prefix from index_url; ignore duplicate .md routes.",
+      "urls": [
+        "https://code.claude.com/docs/zh-CN/agent-sdk/agent-loop",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/claude-code-features",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/cost-tracking",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/custom-tools",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/file-checkpointing",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/hooks",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/hosting",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/mcp",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/migration-guide",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/modifying-system-prompts",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/observability",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/overview",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/permissions",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/plugins",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/python",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/quickstart",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/secure-deployment",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/session-storage",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/sessions",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/skills",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/slash-commands",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/streaming-output",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/streaming-vs-single-mode",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/structured-outputs",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/subagents",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/todo-tracking",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/tool-search",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/typescript",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/typescript-v2-preview",
+        "https://code.claude.com/docs/zh-CN/agent-sdk/user-input"
+      ]
+    },
+    "agent_sdk_demos": {
+      "repository_url": "https://github.com/anthropics/claude-agent-sdk-demos",
+      "contents_api_url": "https://api.github.com/repos/anthropics/claude-agent-sdk-demos/contents",
+      "readme_url": "https://raw.githubusercontent.com/anthropics/claude-agent-sdk-demos/main/README.md",
+      "project_url_template": "https://github.com/anthropics/claude-agent-sdk-demos/tree/main/{project}",
+      "discovery": "List top-level directories containing README.md and inspect each project README plus relevant source files.",
+      "urls": [
+        "https://github.com/anthropics/claude-agent-sdk-demos/tree/main/ask-user-question-previews",
+        "https://github.com/anthropics/claude-agent-sdk-demos/tree/main/email-agent",
+        "https://github.com/anthropics/claude-agent-sdk-demos/tree/main/excel-demo",
+        "https://github.com/anthropics/claude-agent-sdk-demos/tree/main/hello-world",
+        "https://github.com/anthropics/claude-agent-sdk-demos/tree/main/hello-world-v2",
+        "https://github.com/anthropics/claude-agent-sdk-demos/tree/main/research-agent",
+        "https://github.com/anthropics/claude-agent-sdk-demos/tree/main/resume-generator",
+        "https://github.com/anthropics/claude-agent-sdk-demos/tree/main/simple-chatapp"
+      ]
+    }
+  },
+  "capability_groups": {
+    "foundation": [
+      "overview",
+      "quickstart",
+      "agent-loop",
+      "typescript",
+      "python",
+      "migration-guide",
+      "typescript-v2-preview"
+    ],
+    "interaction_and_output": [
+      "user-input",
+      "streaming-output",
+      "streaming-vs-single-mode",
+      "structured-outputs"
+    ],
+    "state_and_recovery": [
+      "sessions",
+      "session-storage",
+      "file-checkpointing"
+    ],
+    "tools_and_control": [
+      "custom-tools",
+      "mcp",
+      "permissions",
+      "hooks",
+      "tool-search"
+    ],
+    "composition": [
+      "subagents",
+      "skills",
+      "plugins",
+      "claude-code-features",
+      "modifying-system-prompts",
+      "slash-commands",
+      "todo-tracking"
+    ],
+    "production": [
+      "hosting",
+      "secure-deployment",
+      "observability",
+      "cost-tracking"
+    ],
+    "demo_patterns": [
+      "hello-world",
+      "hello-world-v2",
+      "ask-user-question-previews",
+      "simple-chatapp",
+      "research-agent",
+      "email-agent",
+      "excel-demo",
+      "resume-generator"
+    ]
+  },
+  "refresh_errors": []
+}

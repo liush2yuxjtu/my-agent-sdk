@@ -72,6 +72,20 @@
         "逐项引用 streaming-output、permissions 及相关 demo",
         "实施后运行原有测试和最小回归检查"
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "帮我看看当前旧 Agent SDK 项目还能加什么能力。先把所有官方能力和 demo 都给我看，再说现状和建议，最后让我确认。",
+      "expected_output": "刷新两套 URL 来源、探索项目，并按三个固定区块完成访谈后等待确认。",
+      "files": [],
+      "expectations": [
+        "读取 new-agent-sdk 与 agent-sdk-dev",
+        "刷新 source-packs.json 并探索当前官方文档与相关 demo README/source",
+        "展示 WHAT WE CAN DO，覆盖两套来源发现的完整能力并提供逐项 URL",
+        "展示 WHAT WE HAVE SO FAR，基于真实 repo 检查而非猜测",
+        "展示 WHAT IS SUGGESTED TO IMPROVE / ADD，建议与来源和差距绑定",
+        "最终明确等待用户确认后才写文件"
+      ]
     }
   ]
 }

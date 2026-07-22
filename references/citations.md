@@ -9,6 +9,7 @@
 - [quickstart](https://code.claude.com/docs/zh-CN/agent-sdk/quickstart) — 最小可运行入口
 - [agent-loop](https://code.claude.com/docs/zh-CN/agent-sdk/agent-loop) — 消息生命周期、工具与上下文
 - [typescript](https://code.claude.com/docs/zh-CN/agent-sdk/typescript) / [python](https://code.claude.com/docs/zh-CN/agent-sdk/python) — 各语言 API
+- [migration-guide](https://code.claude.com/docs/zh-CN/agent-sdk/migration-guide) — 旧版 SDK 迁移
 - [typescript-v2-preview](https://code.claude.com/docs/zh-CN/agent-sdk/typescript-v2-preview) — 实验性 V2 API，引用时必须标注预览状态
 
 ### 输入、输出与状态
@@ -27,6 +28,11 @@
 - [hooks](https://code.claude.com/docs/zh-CN/agent-sdk/hooks) — 生命周期拦截
 - [subagents](https://code.claude.com/docs/zh-CN/agent-sdk/subagents) — 子代理
 - [skills](https://code.claude.com/docs/zh-CN/agent-sdk/skills) / [plugins](https://code.claude.com/docs/zh-CN/agent-sdk/plugins) — 扩展机制
+- [claude-code-features](https://code.claude.com/docs/zh-CN/agent-sdk/claude-code-features) — 复用 Claude Code 功能
+- [modifying-system-prompts](https://code.claude.com/docs/zh-CN/agent-sdk/modifying-system-prompts) — 系统提示词
+- [slash-commands](https://code.claude.com/docs/zh-CN/agent-sdk/slash-commands) — 斜杠命令
+- [todo-tracking](https://code.claude.com/docs/zh-CN/agent-sdk/todo-tracking) — Todo 跟踪
+- [tool-search](https://code.claude.com/docs/zh-CN/agent-sdk/tool-search) — 工具搜索
 
 ### 生产运行
 - [hosting](https://code.claude.com/docs/zh-CN/agent-sdk/hosting) — 托管拓扑
@@ -34,7 +40,7 @@
 - [observability](https://code.claude.com/docs/zh-CN/agent-sdk/observability) — 可观测性
 - [cost-tracking](https://code.claude.com/docs/zh-CN/agent-sdk/cost-tracking) — 成本追踪
 
-入口页还链接迁移、系统提示词、Claude Code 功能、slash commands、todo tracking 与 tool search；仅在实现确实涉及时引用。
+完整、可刷新的 URL 快照见 [`source-packs.json`](source-packs.json)。
 
 ## anthropics/claude-agent-sdk-demos/{project}
 
