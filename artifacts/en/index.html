@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>my-agent-sdk · 创建或改进 Agent SDK</title>
+<title>my-agent-sdk · Create or improve Agent SDK apps</title>
 <link rel="alternate" hreflang="zh-CN" href="https://liush2yuxjtu.github.io/my-agent-sdk/">
 <link rel="alternate" hreflang="en" href="https://liush2yuxjtu.github.io/my-agent-sdk/en/">
 <style>
@@ -176,15 +176,15 @@ footer .sp{flex:1}
 
 <nav>
   <div class="wrap">
-    <a class="logo" href="#top"><span class="logo-mark">{ }</span>引用驱动配置台</a>
+    <a class="logo" href="#top"><span class="logo-mark">{ }</span>Evidence-driven setup</a>
     <div class="links">
-      <a href="#flow">四步流程</a>
-      <a href="#demo-video">会话演示</a>
-      <a href="#caps">能力</a>
-      <a href="#ledger">引用账本</a>
-      <a href="#export">导出</a>
+      <a href="#flow">Workflow</a>
+      <a href="#demo-video">Session demo</a>
+      <a href="#caps">Capabilities</a>
+      <a href="#ledger">Citation ledger</a>
+      <a href="#export">Export</a>
     </div>
-    <a class="btn btn-ghost btn-sm" href="en/">English</a><a class="btn btn-primary btn-sm" href="intake.html">打开配置台</a>
+    <a class="btn btn-ghost btn-sm" href="../">中文</a><a class="btn btn-primary btn-sm" href="../intake.html">Open configurator</a>
   </div>
 </nav>
 
@@ -193,17 +193,17 @@ footer .sp{flex:1}
   <div class="wrap">
     <div>
       <span class="badge"><span class="dot"></span>MY-AGENT-SDK → NEW-AGENT-SDK</span>
-      <h1>用<em>证据</em><br>配置你的 Agent。</h1>
-      <p class="lede">创建新的或改进现有的 Agent SDK：自动检测已有项目并预填，也支持聊天内逐题交互。导出的 JSON 同时包含目标、现状、官方文档逐 URL 账本和 Anthropic 示例逐项目账本。</p>
+      <h1>Configure your Agent<br>with <em>evidence</em>.</h1>
+      <p class="lede">Create a new Agent SDK app or improve an existing one. Existing projects are detected and pre-filled, while the in-chat interview keeps every decision explicit. Exported JSON carries goals, current state, per-page docs, and per-project demos.</p>
       <div class="hero-cta">
-        <a class="btn btn-primary" href="intake.html">创建新项目 →</a>
-        <a class="btn btn-ghost" href="intake.html?operation=improve">改进现有项目</a>
+        <a class="btn btn-primary" href="../intake.html">Create a new app →</a>
+        <a class="btn btn-ghost" href="../intake.html?operation=improve">Improve an existing app</a>
       </div>
-      <p class="hero-note">$ pi run my-agent-sdk · 输出 my-agent-sdk-build-intake.json</p>
+      <p class="hero-note">$ pi run my-agent-sdk · outputs my-agent-sdk-build-intake.json</p>
     </div>
     <div class="hero-card reveal">
       <div class="hero-card-head"><i></i><i></i><i></i><span>my-agent-sdk-build-intake.json</span></div>
-<pre><span class="c">// 导出即证据</span>{
+<pre><span class="c">// export is evidence</span>{
   <span class="k">"project_name"</span>: <span class="s">"support-agent"</span>,
   <span class="k">"language"</span>: <span class="s">"TypeScript"</span>,
   <span class="k">"capabilities"</span>: [
@@ -211,21 +211,21 @@ footer .sp{flex:1}
     <span class="s">"sessions"</span>
   ],
   <span class="k">"citations"</span>: {
-    <span class="k">"official_docs"</span>: [<span class="c">/* 逐 URL */</span> … ],
-    <span class="k">"demo_projects"</span>: [<span class="c">/* 逐项目 */</span> … ]
+    <span class="k">"official_docs"</span>: [<span class="c">/* per URL */</span> … ],
+    <span class="k">"demo_projects"</span>: [<span class="c">/* per project */</span> … ]
   }
 }</pre>
-      <div class="hero-card-foot"><span>wrapper_chain: my-agent-sdk → new-agent-sdk</span><b>✓ 可导出</b></div>
+      <div class="hero-card-foot"><span>wrapper_chain: my-agent-sdk → new-agent-sdk</span><b>✓ exportable</b></div>
     </div>
   </div>
 </header>
 
 <div class="stats">
   <div class="wrap">
-    <div class="stat reveal"><div class="num" data-n="30">0</div><p>官方文档页面 · 逐 URL</p></div>
-    <div class="stat reveal"><div class="num" data-n="8">0</div><p>Anthropic 示例项目</p></div>
-    <div class="stat reveal"><div class="num" data-n="18">0</div><p>可勾选能力组</p></div>
-    <div class="stat reveal"><div class="num"><i>1</i></div><p>份 JSON · 全部说清</p></div>
+    <div class="stat reveal"><div class="num" data-n="30">0</div><p>official documentation pages</p></div>
+    <div class="stat reveal"><div class="num" data-n="8">0</div><p>Anthropic demo projects</p></div>
+    <div class="stat reveal"><div class="num" data-n="18">0</div><p>selectable capability groups</p></div>
+    <div class="stat reveal"><div class="num"><i>1</i></div><p>JSON file · fully scoped</p></div>
   </div>
 </div>
 
@@ -233,16 +233,16 @@ footer .sp{flex:1}
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="badge">REAL PI SESSION</span>
-      <h2>看一次真实的交互访谈。</h2>
-      <p>实际运行 Pi 与 my-agent-sdk：探索来源、盘点现状、提出建议，并在最终确认门前停下。</p>
+      <h2>Watch a real interactive interview.</h2>
+      <p>A real Pi and my-agent-sdk session: explore live sources, audit the current app, recommend a minimal scope, and stop at the final confirmation gate.</p>
     </div>
     <div class="video-shell reveal">
-      <video controls muted playsinline preload="metadata" poster="my-agent-sdk-pi-session-zh-poster.jpg">
-        <source src="my-agent-sdk-pi-session-zh.webm" type="video/webm">
-        你的浏览器不支持 WebM 视频。
+      <video controls muted playsinline preload="metadata" poster="../my-agent-sdk-pi-session-en-poster.jpg">
+        <source src="../my-agent-sdk-pi-session-en.webm" type="video/webm">
+        Your browser does not support WebM video.
       </video>
     </div>
-    <div class="video-note"><span>1280 × 720 · WebM · 真实 Pi 会话 · openai-codex/gpt-5.6-sol · medium</span><a href="my-agent-sdk-pi-session-zh.webm">下载视频</a></div>
+    <div class="video-note"><span>1280 × 720 · WebM · real Pi session · openai-codex/gpt-5.6-sol · medium</span><a href="../my-agent-sdk-pi-session-en.webm">Download video</a></div>
   </div>
 </section>
 
@@ -250,14 +250,14 @@ footer .sp{flex:1}
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="badge">WORKFLOW</span>
-      <h2>四步，从意图到构建配置。</h2>
-      <p>不是凭印象开写代码，而是先把「要做什么」和「依据什么」固定在一份文件里。</p>
+      <h2>Four steps from intent to an approved plan.</h2>
+      <p>Do not start from memory. First make the goal, evidence, and boundaries explicit.</p>
     </div>
     <div class="steps">
-      <div class="step reveal"><div class="n">①</div><h3>刷新来源并探索</h3><p>读取 Agent SDK 全部文档、全部 demo，并在改进模式审查现有项目。</p></div>
-      <div class="step reveal"><div class="n">②</div><h3>WHAT WE CAN DO</h3><p>带逐页、逐项目链接展示当前能做的完整能力。</p></div>
-      <div class="step reveal"><div class="n">③</div><h3>HAVE / SUGGEST</h3><p>说明已有能力与缺口，再提出最小、可追溯的改进建议。</p></div>
-      <div class="step reveal"><div class="n">④</div><h3>最终确认</h3><p>用户确认 create / modify / keep / verify 计划后才开始写文件。</p></div>
+      <div class="step reveal"><div class="n">①</div><h3>Refresh sources and explore</h3><p>Read every Agent SDK page and demo; in improve mode, audit the existing repository.</p></div>
+      <div class="step reveal"><div class="n">②</div><h3>WHAT WE CAN DO</h3><p>Show the full current capability set with per-page and per-project links.</p></div>
+      <div class="step reveal"><div class="n">③</div><h3>HAVE / SUGGEST</h3><p>Explain current capabilities and gaps, then suggest the smallest traceable improvements.</p></div>
+      <div class="step reveal"><div class="n">④</div><h3>Final confirmation</h3><p>Write files only after the user approves the create / modify / keep / verify plan.</p></div>
     </div>
   </div>
 </section>
@@ -266,22 +266,22 @@ footer .sp{flex:1}
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="badge">CAPABILITIES</span>
-      <h2>完整能力，勾选即推荐引用。</h2>
-      <p>每勾一项能力，配置台自动点亮对应的官方文档页与示例项目 —— 不用自己翻文档目录。</p>
+      <h2>Full capabilities, source recommendations included.</h2>
+      <p>Each selected capability highlights the matching official pages and demo projects automatically.</p>
     </div>
     <div class="caps">
-      <div class="cap reveal"><div class="ico">⚡</div><h4>流式输出</h4><p>streaming-output · simple-chatapp</p></div>
+      <div class="cap reveal"><div class="ico">⚡</div><h4>Streaming</h4><p>streaming-output · simple-chatapp</p></div>
       <div class="cap reveal"><div class="ico">❓</div><h4>AskUserQuestion</h4><p>user-input · ask-user-question-previews</p></div>
       <div class="cap reveal"><div class="ico">🔌</div><h4>MCP</h4><p>mcp · custom-tools · hello-world</p></div>
-      <div class="cap reveal"><div class="ico">🛡️</div><h4>权限</h4><p>permissions · hooks</p></div>
-      <div class="cap reveal"><div class="ico">💾</div><h4>会话</h4><p>sessions · session-storage · hello-world-v2</p></div>
-      <div class="cap reveal"><div class="ico">🤖</div><h4>子代理</h4><p>subagents · research-agent</p></div>
-      <div class="cap reveal"><div class="ico">🔧</div><h4>自定义工具</h4><p>custom-tools · mcp · hello-world</p></div>
-      <div class="cap reveal"><div class="ico">📐</div><h4>结构化输出</h4><p>structured-outputs</p></div>
+      <div class="cap reveal"><div class="ico">🛡️</div><h4>Permissions</h4><p>permissions · hooks</p></div>
+      <div class="cap reveal"><div class="ico">💾</div><h4>Sessions</h4><p>sessions · session-storage · hello-world-v2</p></div>
+      <div class="cap reveal"><div class="ico">🤖</div><h4>Subagents</h4><p>subagents · research-agent</p></div>
+      <div class="cap reveal"><div class="ico">🔧</div><h4>Custom tools</h4><p>custom-tools · mcp · hello-world</p></div>
+      <div class="cap reveal"><div class="ico">📐</div><h4>Structured output</h4><p>structured-outputs</p></div>
       <div class="cap reveal"><div class="ico">🪝</div><h4>Hooks</h4><p>hooks · research-agent</p></div>
-      <div class="cap reveal"><div class="ico">🏭</div><h4>生产加固</h4><p>hosting · secure-deployment · observability</p></div>
+      <div class="cap reveal"><div class="ico">🏭</div><h4>Production hardening</h4><p>hosting · secure-deployment · observability</p></div>
     </div>
-    <div class="auto-note reveal">💡&nbsp;<span><b>智能预填：</b>在已有 Agent SDK 项目目录运行时，会自动识别语言、包管理器、SDK 版本和现有能力；切换语言或能力也会同步推荐引用。</span></div>
+    <div class="auto-note reveal">💡&nbsp;<span><b>Smart pre-fill:</b> when run inside an Agent SDK repository, the form detects language, package manager, SDK version, and existing capabilities; changing language or capabilities updates source recommendations.</span></div>
   </div>
 </section>
 
@@ -289,32 +289,32 @@ footer .sp{flex:1}
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="badge">CITATION LEDGER</span>
-      <h2>两本账：文档逐 URL，示例逐项目。</h2>
-      <p>导出的不是一句「参考了官方文档」，而是一份可以逐条点击核验的引用清单。</p>
+      <h2>Two ledgers: docs by URL, demos by project.</h2>
+      <p>The export is not “see the docs.” It is a clickable, verifiable citation ledger.</p>
     </div>
     <div class="ledger-grid">
       <div class="ledger reveal">
-        <div class="ledger-head"><h3>官方文档 · 30 页</h3><span>按 URL 记账</span></div>
+        <div class="ledger-head"><h3>Official docs · 30 pages</h3><span>tracked by URL</span></div>
         <ul>
-          <li><div><b>Agent SDK 概览</b><small>code.claude.com/docs/zh-CN/agent-sdk/overview</small></div><span class="why">产品边界</span></li>
-          <li><div><b>快速开始</b><small>code.claude.com/docs/zh-CN/agent-sdk/quickstart</small></div><span class="why">最小入口</span></li>
-          <li><div><b>代理循环</b><small>code.claude.com/docs/zh-CN/agent-sdk/agent-loop</small></div><span class="why">消息生命周期</span></li>
-          <li><div><b>处理用户输入</b><small>code.claude.com/docs/zh-CN/agent-sdk/user-input</small></div><span class="why">交互往返</span></li>
-          <li><div><b>流式输出</b><small>code.claude.com/docs/zh-CN/agent-sdk/streaming-output</small></div><span class="why">实时文本</span></li>
+          <li><div><b>Agent SDK overview</b><small>code.claude.com/docs/zh-CN/agent-sdk/overview</small></div><span class="why">product boundary</span></li>
+          <li><div><b>Quickstart</b><small>code.claude.com/docs/zh-CN/agent-sdk/quickstart</small></div><span class="why">minimal entry</span></li>
+          <li><div><b>Agent loop</b><small>code.claude.com/docs/zh-CN/agent-sdk/agent-loop</small></div><span class="why">message lifecycle</span></li>
+          <li><div><b>User input</b><small>code.claude.com/docs/zh-CN/agent-sdk/user-input</small></div><span class="why">interaction round-trip</span></li>
+          <li><div><b>Streaming</b><small>code.claude.com/docs/zh-CN/agent-sdk/streaming-output</small></div><span class="why">live text</span></li>
         </ul>
       </div>
       <div class="ledger reveal">
-        <div class="ledger-head"><h3>Anthropic 示例 · 8 项目</h3><span>按项目记账</span></div>
+        <div class="ledger-head"><h3>Anthropic demos · 8 projects</h3><span>tracked by project</span></div>
         <ul>
-          <li><div><b>hello-world</b><small>github.com/anthropics/claude-agent-sdk-demos/…/hello-world</small></div><span class="why">最小 query()</span></li>
-          <li><div><b>hello-world-v2</b><small>…/hello-world-v2</small></div><span class="why">V2 会话</span></li>
-          <li><div><b>simple-chatapp</b><small>…/simple-chatapp</small></div><span class="why">流式聊天环</span></li>
-          <li><div><b>research-agent</b><small>…/research-agent</small></div><span class="why">子代理编排</span></li>
-          <li><div><b>ask-user-question-previews</b><small>…/ask-user-question-previews</small></div><span class="why">阻塞往返</span></li>
+          <li><div><b>hello-world</b><small>github.com/anthropics/claude-agent-sdk-demos/…/hello-world</small></div><span class="why">minimal query()</span></li>
+          <li><div><b>hello-world-v2</b><small>…/hello-world-v2</small></div><span class="why">V2 Sessions</span></li>
+          <li><div><b>simple-chatapp</b><small>…/simple-chatapp</small></div><span class="why">streaming chat loop</span></li>
+          <li><div><b>research-agent</b><small>…/research-agent</small></div><span class="why">subagent orchestration</span></li>
+          <li><div><b>ask-user-question-previews</b><small>…/ask-user-question-previews</small></div><span class="why">blocking round-trip</span></li>
         </ul>
       </div>
     </div>
-    <p class="warning reveal"><strong>生产边界：</strong><a href="https://github.com/anthropics/claude-agent-sdk-demos#readme">示例仓库根 README</a> 明确说明这些项目仅供本地开发，不应直接部署到生产或规模化使用 —— 这条警告会随 JSON 一并导出。</p>
+    <p class="warning reveal"><strong>Production boundary:</strong> <a href="https://github.com/anthropics/claude-agent-sdk-demos#readme">the demo repository README</a> states that these projects are for local development only and must not be deployed directly to production or at scale. This warning ships with the exported JSON.</p>
   </div>
 </section>
 
@@ -322,31 +322,31 @@ footer .sp{flex:1}
   <div class="wrap">
     <div class="reveal">
       <span class="badge">EXPORT</span>
-      <h2 style="font-size:clamp(28px,3.6vw,42px);letter-spacing:-.03em;line-height:1.08;margin:14px 0 12px">一份 JSON，<br>交给下一棒。</h2>
-      <p style="color:var(--ink-soft);margin:0">创建模式把需求交给 new-agent-sdk；改进模式复用同一套文档与验证规则，只做目标所需的最小 diff。两种模式都支持聊天内交互和 HTML 表单。</p>
+      <h2 style="font-size:clamp(28px,3.6vw,42px);letter-spacing:-.03em;line-height:1.08;margin:14px 0 12px">One JSON file,<br>ready for the next step.</h2>
+      <p style="color:var(--ink-soft);margin:0">Create mode hands requirements to new-agent-sdk. Improve mode reuses the same documentation and verification rules while making the smallest necessary diff. Both support in-chat interviews and HTML forms.</p>
       <div class="export-points">
-        <div class="export-point"><div class="ic">✓</div><div><h4>构建需求完整</h4><p>项目意图、能力清单、补充要求，一个字段不少。</p></div></div>
-        <div class="export-point"><div class="ic">✓</div><div><h4>引用可逐条核验</h4><p>官方文档逐 URL、示例逐项目，并附选择理由。</p></div></div>
-        <div class="export-point"><div class="ic">✓</div><div><h4>一键复制为提示词</h4><p>直接粘回会话，上下文无缝衔接。</p></div></div>
+        <div class="export-point"><div class="ic">✓</div><div><h4>Complete requirements</h4><p>Intent, capabilities, and constraints stay together.</p></div></div>
+        <div class="export-point"><div class="ic">✓</div><div><h4>Verifiable citations</h4><p>Official docs by URL and demos by project, each with a reason.</p></div></div>
+        <div class="export-point"><div class="ic">✓</div><div><h4>Copy as a prompt</h4><p>Paste it back into the session without losing context.</p></div></div>
       </div>
     </div>
     <div class="code-card reveal">
-      <div class="code-card-head"><i></i><i></i><i></i><span>导出预览</span></div>
+      <div class="code-card-head"><i></i><i></i><i></i><span>Export preview</span></div>
 <pre>{
   <span class="k">"project_name"</span>: <span class="s">"support-agent"</span>,
   <span class="k">"language"</span>: <span class="s">"TypeScript"</span>,
   <span class="k">"tooling"</span>: <span class="s">"pnpm"</span>,
   <span class="k">"agent_type"</span>: <span class="s">"custom use case"</span>,
   <span class="k">"capabilities"</span>: [<span class="s">"streaming"</span>, <span class="s">"AskUserQuestion"</span>, <span class="s">"sessions"</span>],
-  <span class="k">"requirements"</span>: [<span class="s">"不要写入真实 secret；.env 必须忽略"</span>],
+  <span class="k">"requirements"</span>: [<span class="s">"Never write real secrets; ignore .env"</span>],
   <span class="k">"wrapper_chain"</span>: [<span class="s">"my-agent-sdk"</span>, <span class="s">"new-agent-sdk"</span>, <span class="s">"agent-sdk-dev"</span>],
   <span class="k">"citations"</span>: {
     <span class="k">"official_docs"</span>: [
-      { <span class="k">"title"</span>: <span class="s">"Agent SDK 概览"</span>, <span class="k">"url"</span>: <span class="s">"…/overview"</span>, <span class="k">"reason"</span>: <span class="s">"产品边界与核心能力"</span> },
-      { <span class="k">"title"</span>: <span class="s">"流式输出"</span>, <span class="k">"url"</span>: <span class="s">"…/streaming-output"</span>, <span class="k">"reason"</span>: <span class="s">"实时文本、工具调用与最终结果"</span> }
+      { <span class="k">"title"</span>: <span class="s">"Agent SDK overview"</span>, <span class="k">"url"</span>: <span class="s">"…/overview"</span>, <span class="k">"reason"</span>: <span class="s">"product boundary and core capabilities"</span> },
+      { <span class="k">"title"</span>: <span class="s">"Streaming"</span>, <span class="k">"url"</span>: <span class="s">"…/streaming-output"</span>, <span class="k">"reason"</span>: <span class="s">"live text, tool calls, and final result"</span> }
     ],
     <span class="k">"demo_projects"</span>: [
-      { <span class="k">"title"</span>: <span class="s">"simple-chatapp"</span>, <span class="k">"url"</span>: <span class="s">"…/simple-chatapp"</span>, <span class="k">"reason"</span>: <span class="s">"React + Express + WebSocket 流式聊天环"</span> }
+      { <span class="k">"title"</span>: <span class="s">"simple-chatapp"</span>, <span class="k">"url"</span>: <span class="s">"…/simple-chatapp"</span>, <span class="k">"reason"</span>: <span class="s">"React + Express + WebSocket streaming chat loop"</span> }
     ],
     <span class="k">"demo_warning"</span>: <span class="s">"Anthropic demos are for local development only…"</span>
   }
@@ -357,20 +357,20 @@ footer .sp{flex:1}
 
 <section class="final">
   <div class="wrap reveal">
-    <h2>先固定<em>证据</em>，<br>再动手构建。</h2>
-    <p>打开配置台创建新项目，或导入/自动检测已有项目后继续改进；也可以直接在聊天里逐题回答。</p>
+    <h2>Fix the <em>evidence</em> first.<br>Then build.</h2>
+    <p>Open the configurator to create a project, import or detect an existing app to improve it, or answer one focused question at a time in chat.</p>
     <div class="hero-cta">
-      <a class="btn btn-primary" href="intake.html">打开配置台 →</a>
-      <a class="btn btn-dark" href="https://github.com/liush2yuxjtu/my-agent-sdk">查看 GitHub</a>
+      <a class="btn btn-primary" href="../intake.html">Open configurator →</a>
+      <a class="btn btn-dark" href="https://github.com/liush2yuxjtu/my-agent-sdk">View GitHub</a>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <a class="logo" href="#top"><span class="logo-mark">{ }</span>引用驱动配置台</a>
+    <a class="logo" href="#top"><span class="logo-mark">{ }</span>Evidence-driven setup</a>
     <span class="sp"></span>
-    <span class="prov">来源项目：my-agent-sdk · /Users/liushiyuwin/.pi/agent/skills/my-agent-sdk · Pi session：E674FE87-0D91-49D4-93DB-6B4A9DBC0012</span>
+    <span class="prov">Source project:my-agent-sdk · /Users/liushiyuwin/.pi/agent/skills/my-agent-sdk · Pi session:E674FE87-0D91-49D4-93DB-6B4A9DBC0012</span>
   </div>
 </footer>
 
