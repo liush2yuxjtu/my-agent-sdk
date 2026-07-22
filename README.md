@@ -115,7 +115,7 @@ Anthropic 在[仓库 README](https://github.com/anthropics/claude-agent-sdk-demo
 
 ## 演示视频与 HTML 推介包
 
-- [真实 Pi 交互会话 WebM](https://github.com/liush2yuxjtu/my-agent-sdk/releases/download/v0.4.0/my-agent-sdk-pi-session.webm)
+- [真实 Pi 交互会话 WebM](https://liush2yuxjtu.github.io/my-agent-sdk/my-agent-sdk-pi-session.webm)
 - [Pi 会话回放页](artifacts/pi-session-demo.html)
 - [交互式推介片](artifacts/pitch-video.html)
 - [GitHub Pages 落地页](artifacts/index.html)
