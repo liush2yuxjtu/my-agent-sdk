@@ -4,6 +4,8 @@
 
 > `my-agent-sdk` 不重写脚手架逻辑。它明确依赖并调用 **[`new-agent-sdk`](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/agent-sdk-dev/commands/new-sdk-app.md)**；该流程来自 Anthropic 官方 [`agent-sdk-dev` 插件](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/agent-sdk-dev)。
 
+**在线配置器：<https://liush2yuxjtu.github.io/my-agent-sdk/>**
+
 ## 为什么需要这个包装层
 
 `new-agent-sdk` 负责正确创建项目；`my-agent-sdk` 补充三个交付门：
