@@ -113,8 +113,10 @@ open /tmp/my-agent-sdk-intake.html
 
 Anthropic 在[仓库 README](https://github.com/anthropics/claude-agent-sdk-demos#readme)中明确说明：这些 demo 仅供本地开发，不应直接部署到生产或规模化使用。
 
-## HTML 推介包
+## 演示视频与 HTML 推介包
 
+- [真实 Pi 交互会话 WebM](https://github.com/liush2yuxjtu/my-agent-sdk/releases/download/v0.4.0/my-agent-sdk-pi-session.webm)
+- [Pi 会话回放页](artifacts/pi-session-demo.html)
 - [交互式推介片](artifacts/pitch-video.html)
 - [GitHub Pages 落地页](artifacts/index.html)
 - [旧版产品落地页](artifacts/landing-page.html)

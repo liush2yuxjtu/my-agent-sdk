@@ -79,6 +79,11 @@ section{padding:88px 0}
 .sec-head h2{font-size:clamp(28px,3.6vw,42px);letter-spacing:-.03em;line-height:1.08;margin:0 0 12px}
 .sec-head p{margin:0;color:var(--ink-soft);font-size:16px}
 
+/* video demo */
+.video-shell{background:var(--dark-2);border-radius:16px;padding:12px;box-shadow:0 28px 70px #211a0b2b}
+.video-shell video{display:block;width:100%;aspect-ratio:16/9;border-radius:10px;background:#0d110e}
+.video-note{display:flex;justify-content:space-between;gap:16px;margin-top:12px;color:var(--ink-soft);font:12px var(--sans)}
+
 /* steps */
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:step}
 .step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;position:relative;transition:transform .2s,box-shadow .2s,border-color .2s}
@@ -172,6 +177,7 @@ footer .sp{flex:1}
     <a class="logo" href="#top"><span class="logo-mark">{ }</span>引用驱动配置台</a>
     <div class="links">
       <a href="#flow">四步流程</a>
+      <a href="#demo-video">会话演示</a>
       <a href="#caps">能力</a>
       <a href="#ledger">引用账本</a>
       <a href="#export">导出</a>
@@ -220,6 +226,23 @@ footer .sp{flex:1}
     <div class="stat reveal"><div class="num"><i>1</i></div><p>份 JSON · 全部说清</p></div>
   </div>
 </div>
+
+<section id="demo-video">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="badge">REAL PI SESSION</span>
+      <h2>看一次真实的交互访谈。</h2>
+      <p>实际运行 Pi 与 my-agent-sdk：探索来源、盘点现状、提出建议，并在最终确认门前停下。</p>
+    </div>
+    <div class="video-shell reveal">
+      <video controls muted playsinline preload="metadata" poster="my-agent-sdk-pi-session-poster.jpg">
+        <source src="https://github.com/liush2yuxjtu/my-agent-sdk/releases/download/v0.4.0/my-agent-sdk-pi-session.webm" type="video/webm">
+        你的浏览器不支持 WebM 视频。
+      </video>
+    </div>
+    <div class="video-note"><span>1280 × 720 · WebM · 真实 Pi 会话 · openai-codex/gpt-5.6-sol · medium</span><a href="https://github.com/liush2yuxjtu/my-agent-sdk/releases/download/v0.4.0/my-agent-sdk-pi-session.webm">下载视频</a></div>
+  </div>
+</section>
 
 <section id="flow">
   <div class="wrap">
